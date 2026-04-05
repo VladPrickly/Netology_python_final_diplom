@@ -88,7 +88,6 @@ DATABASES = {
 #
 #
 # }
-
     'default': {
         'ENGINE': os.getenv('DB_ENGINE'),
         'NAME': os.getenv('DB_NAME'),
