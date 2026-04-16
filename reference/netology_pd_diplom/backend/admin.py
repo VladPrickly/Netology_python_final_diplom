@@ -25,47 +25,64 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Shop)
 class ShopAdmin(admin.ModelAdmin):
-    pass
+    """ Список магазинов """
+    list_display = ('name', 'user', 'url', 'state')
+    list_filter = ('name', 'state')
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    pass
+    """ Список категорий """
+    list_display = ('name',)#, 'shops')
+    list_filter = ('name', 'shops')
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    pass
+    """ Список продуктов """
+    list_display = ('name', 'category')
+    list_filter = ('name', 'category')
 
 
 @admin.register(ProductInfo)
 class ProductInfoAdmin(admin.ModelAdmin):
-    pass
+    """ Информационный список о продуктах """
+    list_display = ('model', 'product', 'external_id', 'shop', 'quantity', 'price', 'price_rrc')
+    list_filter = ('model', 'product', 'external_id', 'shop', 'quantity', 'price', 'price_rrc')
 
 
 @admin.register(Parameter)
 class ParameterAdmin(admin.ModelAdmin):
-    pass
+    """ Список имен параметров """
+    list_display = ('name',)
+    list_filter = ('name',)
 
 
 @admin.register(ProductParameter)
 class ProductParameterAdmin(admin.ModelAdmin):
-    pass
+    """ Список параметров """
+    list_display = ('product_info', 'parameter', 'value')
+    list_filter = ('parameter', 'value')
 
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('user', 'state', 'dt')
+    list_filter = ('state','dt')
 
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    pass
+    """ Список заказанных позиций """
+    list_display = ('order', 'product_info', 'quantity')
+    list_filter = ('order', 'quantity')
 
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
-    pass
+    """ Список контактов пользователя """
+    list_display = ('user', 'city', 'street', 'house', 'structure', 'building', 'apartment', 'phone')
+    list_filter = ('user', 'city', 'phone')
 
 
 @admin.register(ConfirmEmailToken)
