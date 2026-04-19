@@ -25,4 +25,4 @@ urlpatterns = [
 
 admin.site.site_header = "Панель администрирования"
 
-admin.site.index_title = "Администрирования базы данных"
+admin.site.index_title = "Администрирование базы данных"

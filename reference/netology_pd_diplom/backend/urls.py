@@ -25,4 +25,3 @@ urlpatterns = [
     path('order', OrderView.as_view(), name='order'),
 
 ]
-admin.site.index_title = "Администрирования базы данных"
