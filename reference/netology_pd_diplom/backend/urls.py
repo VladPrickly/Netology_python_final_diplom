@@ -1,5 +1,6 @@
 from django.urls import path
 from django_rest_passwordreset.views import reset_password_request_token, reset_password_confirm
+from django.contrib import admin
 
 from backend.views import PartnerUpdate, RegisterAccount, LoginAccount, CategoryView, ShopView, ProductInfoView, \
     BasketView, \
@@ -24,3 +25,4 @@ urlpatterns = [
     path('order', OrderView.as_view(), name='order'),
 
 ]
+admin.site.index_title = "Администрирования базы данных"

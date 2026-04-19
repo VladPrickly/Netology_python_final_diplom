@@ -22,3 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('backend.urls', namespace='backend'))
 ]
+
+admin.site.site_header = "Панель администрирования"
+
+admin.site.index_title = "Администрирования базы данных"
