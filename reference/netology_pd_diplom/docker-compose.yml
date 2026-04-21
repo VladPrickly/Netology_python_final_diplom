@@ -4,13 +4,16 @@ services:
 
   db:
     image: postgres:14.3-alpine3.15
-    container_name: netology_diplom_postgres_db
+    container_name: postgres_db
     ports:
-      - "5431:5432"
+      - "5432:5432"
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+      POSTGRES_HOST: ${DB_HOST}
+      POSTGRES_PORT: ${DB_PORT}
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -21,25 +24,39 @@ services:
 
   redis:
     image: redis:7-alpine
+    container_name: redis
     ports:
       - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
 
-  web:
+  app:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    container_name: app
+    command: >
+      sh -c "python manage.py migrate &&               
+             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       - CELERY_BROKER_URL=redis://redis:6379/0
-      - DATABASE_URL=postgres://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}
 
   celery:
     build: .
+    container_name: celery
     command: celery -A netology_pd_diplom worker --loglevel=info
     volumes:
       - .:/app
@@ -47,8 +64,10 @@ services:
       - db
       - redis
     environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       - CELERY_BROKER_URL=redis://redis:6379/0
-      - DATABASE_URL=postgres://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}
 
 volumes:
   postgres_data:
