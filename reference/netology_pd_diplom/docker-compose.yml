@@ -69,5 +69,31 @@ services:
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       - CELERY_BROKER_URL=redis://redis:6379/0
 
+  flower:
+    build: .
+    container_name: flower
+    ports:
+      - "5555:5555"  # Только localhost для безопасности
+    command: >
+      sh -c "celery -A netology_pd_diplom flower 
+             --port=5555 
+             --broker=${CELERY_BROKER_URL:-redis://redis:6379/0}
+             ${FLOWER_BASIC_AUTH:+--basic_auth=${FLOWER_BASIC_AUTH}}"
+
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=${SECRET_KEY}
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - FLOWER_BASIC_AUTH=${FLOWER_BASIC_AUTH:-}
+    depends_on:
+      app:
+        condition: service_started
+      redis:
+        condition: service_started
+      celery:
+        condition: service_started
+    restart: unless-stopped
+
 volumes:
   postgres_data:
