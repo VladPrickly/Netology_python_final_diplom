@@ -20,7 +20,8 @@ from backend import views
 urlpatterns = [
     path('', views.index, name='home'),
     path('admin/', admin.site.urls),
-    path('api/v1/', include('backend.urls', namespace='backend'))
+    path('api/v1/', include('backend.urls', namespace='backend')),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
 
 admin.site.site_header = "Панель администрирования"
