@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 from ujson import loads as load_json
 from yaml import load as load_yaml, Loader
 
+from . import tasks
 from backend.models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter, Order, OrderItem, \
     Contact, ConfirmEmailToken
 from backend.serializers import UserSerializer, CategorySerializer, ShopSerializer, ProductInfoSerializer, \
@@ -40,10 +41,9 @@ class RegisterAccount(APIView):
                 JsonResponse: The response indicating the status of the operation and any errors.
             """
         # проверяем обязательные аргументы
-        if {'first_name', 'last_name', 'email', 'password', 'company', 'position'}.issubset(request.data):
+        if {'first_name', 'last_name', 'email', 'password'}.issubset(request.data):
 
             # проверяем пароль на сложность
-            sad = 'asd'
             try:
                 validate_password(request.data['password'])
             except Exception as password_error:
@@ -61,6 +61,10 @@ class RegisterAccount(APIView):
                     user = user_serializer.save()
                     user.set_password(request.data['password'])
                     user.save()
+
+                    # асинхронная отправка email
+                    tasks.send_email_registration.delay(user.id)
+
                     return JsonResponse({'Status': True})
                 else:
                     return JsonResponse({'Status': False, 'Errors': user_serializer.errors})
@@ -102,7 +106,7 @@ class ConfirmAccount(APIView):
 
 class AccountDetails(APIView):
     """
-    A class for managing user account details.
+    Класс для просмотра и редактирования данных
 
     Methods:
     - get: Retrieve the details of the authenticated user.
@@ -215,14 +219,14 @@ class ShopView(ListAPIView):
 
 class ProductInfoView(APIView):
     """
-        A class for searching products.
+    Класс для поиска товаров
 
-        Methods:
-        - get: Retrieve the product information based on the specified filters.
+    Methods:
+    - get: Retrieve the product information based on the specified filters.
 
-        Attributes:
-        - None
-        """
+    Attributes:
+    - None
+    """
 
     def get(self, request: Request, *args, **kwargs):
         """
@@ -257,7 +261,7 @@ class ProductInfoView(APIView):
 
 class BasketView(APIView):
     """
-    A class for managing the user's shopping basket.
+    Класс для работы с корзиной покупок
 
     Methods:
     - get: Retrieve the items in the user's basket.
