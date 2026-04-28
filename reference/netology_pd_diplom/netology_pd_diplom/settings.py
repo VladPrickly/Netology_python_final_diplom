@@ -143,10 +143,10 @@ AUTH_USER_MODEL = 'backend.User'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_USE_TLS = True
 
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.mail.ru')
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'netology.diplom@mail.ru')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'CLdm7yW4U9nivz9mbexu')
-EMAIL_PORT = os.environ.get('EMAIL_PORT', '465')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.mail.ru')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'netology.diplom@mail.ru')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'CLdm7yW4U9nivz9mbexu')
+EMAIL_PORT = os.getenv('EMAIL_PORT', '465')
 EMAIL_USE_SSL = True
 SERVER_EMAIL = EMAIL_HOST_USER
 
@@ -180,6 +180,7 @@ CELERY_TIMEZONE = 'UTC'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
+# Flower settings
 CELERY_MONITORING = True
 FLOWER_PORT = 5555
 FLOWER_BASIC_AUTH = os.getenv('FLOWER_BASIC_AUTH', '')
