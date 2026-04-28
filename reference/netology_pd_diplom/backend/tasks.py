@@ -11,15 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=60)
-def send_email_registration(user_id: int, **kwargs):
+def send_email_confirm(user_id: int, subject: str, body: str, **kwargs):
     """
-    Отправка письма на почту при регистрации пользователя
+    Отправка письма на почту клиента
     """
 
     user = User.objects.get(id=user_id)
-    subject = 'Подтверждение регистрации'
-    recipient_list = [user.email, ]
-    body = f'Регистрация прошла успешно. Ваш логин: {user.username}'
+    recipient_list = [user.email,]
+
     try:
         msg = EmailMultiAlternatives(subject=subject, body=body, from_email=settings.EMAIL_HOST_USER, to=recipient_list)
         msg.send()

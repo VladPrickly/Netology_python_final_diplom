@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from ujson import loads as load_json
 from yaml import load as load_yaml, Loader
 
-from . import tasks
+from backend.tasks import send_email_confirm
 from backend.models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter, Order, OrderItem, \
     Contact, ConfirmEmailToken
 from backend.serializers import UserSerializer, CategorySerializer, ShopSerializer, ProductInfoSerializer, \
@@ -63,7 +63,9 @@ class RegisterAccount(APIView):
                     user.save()
 
                     # асинхронная отправка email
-                    tasks.send_email_registration.delay(user.id)
+                    # send_email_registration.delay(user.id)
+                    send_email_confirm.delay(user_id=user.id, subject = 'Подтверждение регистрации',
+                                             body='Регистрация прошла успешно')
 
                     return JsonResponse({'Status': True})
                 else:
@@ -677,7 +679,7 @@ class ContactView(APIView):
 
 class OrderView(APIView):
     """
-    Класс для получения и размешения заказов пользователями
+    Класс для получения и размещения заказов пользователями
     Methods:
     - get: Retrieve the details of a specific order.
     - post: Create a new order.
@@ -713,14 +715,14 @@ class OrderView(APIView):
     # разместить заказ из корзины
     def post(self, request, *args, **kwargs):
         """
-               Put an order and send a notification.
+        Put an order and send a notification.
 
-               Args:
-               - request (Request): The Django request object.
+        Args:
+        - request (Request): The Django request object.
 
-               Returns:
-               - JsonResponse: The response indicating the status of the operation and any errors.
-               """
+        Returns:
+        - JsonResponse: The response indicating the status of the operation and any errors.
+        """
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 
@@ -737,6 +739,10 @@ class OrderView(APIView):
                 else:
                     if is_updated:
                         new_order.send(sender=self.__class__, user_id=request.user.id)
+
+                        # асинхронная отправка email
+                        send_email_confirm.delay(user_id=request.user.id, subject = 'Подтверждение заказа', body = 'Ваш заказ успешно подтвержден')
+
                         return JsonResponse({'Status': True})
 
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
