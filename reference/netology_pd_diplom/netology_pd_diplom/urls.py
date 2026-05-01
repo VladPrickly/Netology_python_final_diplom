@@ -19,7 +19,7 @@ from backend import views
 
 urlpatterns = [
     path('', views.index, name='home'),
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('api/v1/', include('backend.urls', namespace='backend')),
     path("__debug__/", include("debug_toolbar.urls")),
 ]

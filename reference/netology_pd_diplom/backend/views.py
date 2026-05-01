@@ -1,4 +1,5 @@
 from distutils.util import strtobool
+from django.shortcuts import render
 from rest_framework.request import Request
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
@@ -730,4 +731,4 @@ class OrderView(APIView):
 
 
 def index(request):
-    return HttpResponse('<h1>Дипломный проект профессии "Python-разработчик: расширенный курс"</h1>')
+    return render(request, 'backend/index.html')
