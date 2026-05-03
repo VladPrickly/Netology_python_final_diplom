@@ -1,0 +1,164 @@
+shop: М.Видео
+categories:
+  - id: 224
+    name: Смартфоны
+  - id: 30
+    name: Ноутбуки
+  - id: 31
+    name: Наушники
+  - id: 32
+    name: Планшеты
+
+goods:
+  - id: 4216313
+    category: 224
+    model: apple/iphone/xr
+    name: Смартфон Apple iPhone XR 256GB (красный)
+    price: 62000
+    price_rrc: 67990
+    quantity: 12
+    parameters:
+      "Диагональ (дюйм)": 6.1
+      "Разрешение (пикс)": 1792x828
+      "Встроенная память (Гб)": 256
+      "Цвет": красный
+      "Поддержка 5G": нет
+      "Аккумулятор (мАч)": 2942
+  - id: 123544571
+    category: 224
+    model: xiaomi/mi-10t-pro
+    name: Smartphone Xiaomi Mi 10T Pro 256GB (cosmic black)
+    price: 65000
+    price_rrc: 69990
+    quantity: 10
+    parameters:
+      "Screen Size (inches)": 6.67
+      "Resolution (pixels)": 2400x1080
+      "Internal Memory (GB)": 256
+      "Color": cosmic black
+      "5G Support": true
+      "Battery (mAh)": 5000
+  - id: 5001234
+    category: 224
+    model: samsung/galaxy-a52
+    name: Смартфон Samsung Galaxy A52 128GB (фиолетовый)
+    price: 35000
+    price_rrc: 39990
+    quantity: 15
+    parameters:
+      "Диагональ (дюйм)": 6.5
+      "Разрешение (пикс)": 2400x1080
+      "Встроенная память (Гб)": 128
+      "Цвет": фиолетовый
+      "Поддержка 5G": нет
+      "Аккумулятор (мАч)": 4500
+  - id: 6002001
+    category: 30
+    model: apple/macbook-pro-16
+    name: MacBook Pro 16" M1 Pro 512GB (space gray)
+    price: 225000
+    price_rrc: 249990
+    quantity: 4
+    parameters:
+      "Screen Size (inches)": 16
+      "Resolution (pixels)": 3456x2234
+      "Internal Memory (GB)": 512
+      "Color": space gray
+      "Processor": Apple M1 Pro
+      "RAM (GB)": 16
+  - id: 6002002
+    category: 30
+    model: dell/xps-13
+    name: Ноутбук Dell XPS 13 1TB (серебристый)
+    price: 120000
+    price_rrc: 135990
+    quantity: 7
+    parameters:
+      "Диагональ (дюйм)": 13.3
+      "Разрешение (пикс)": 1920x1200
+      "Встроенная память (Гб)": 1000
+      "Цвет": серебристый
+      "Процессор": Intel Core i7
+      "Оперативная память (Гб)": 16
+  - id: 6002003
+    category: 30
+    model: lenovo/thinkpad-e14
+    name: Ноутбук Lenovo ThinkPad E14 512GB (черный)
+    price: 65000
+    price_rrc: 74990
+    quantity: 9
+    parameters:
+      "Диагональ (дюйм)": 14.0
+      "Разрешение (пикс)": 1920x1080
+      "Встроенная память (Гб)": 512
+      "Цвет": черный
+      "Процессор": Intel Core i5
+      "Оперативная память (Гб)": 8
+  - id: 6003001
+    category: 31
+    model: sony/wh-1000xm4
+    name: Headphones Sony WH-1000XM4 (black)
+    price: 28000
+    price_rrc: 31990
+    quantity: 11
+    parameters:
+      "Color": black
+      "Noise Cancellation": true
+      "Battery Life (hours)": 30
+      "Connection": Bluetooth 5.0
+      "Driver Size (mm)": 40
+  - id: 6003002
+    category: 31
+    model: sennheiser/hd-660s
+    name: Наушники Sennheiser HD 660S (черные)
+    price: 25000
+    price_rrc: 29990
+    quantity: 8
+    parameters:
+      "Цвет": черные
+      "Шумоподавление": нет
+      "Время работы (часы)": проводные
+      "Подключение": 3.5mm Jack
+      "Размер драйвера (мм)": 38
+  - id: 6003003
+    category: 31
+    model: jbl/tune-750
+    name: Headphones JBL Tune 750 (white)
+    price: 12000
+    price_rrc: 14990
+    quantity: 16
+    parameters:
+      "Color": white
+      "Noise Cancellation": false
+      "Battery Life (hours)": 15
+      "Connection": Bluetooth 5.0
+      "Driver Size (mm)": 32
+  - id: 6004001
+    category: 32
+    model: apple/ipad-pro-12-9
+    name: iPad Pro 12.9" 512GB (space gray)
+    price: 89000
+    price_rrc: 99990
+    quantity: 6
+    parameters:
+      "Screen Size (inches)": 12.9
+      "Resolution (pixels)": 2732x2048
+      "Internal Memory (GB)": 512
+      "Color": space gray
+      "Processor": Apple M1
+      "RAM (GB)": 8
+  - id: 6004002
+    category: 32
+    model: samsung/galaxy-tab-s8
+    name: Samsung Galaxy Tab S8 256GB (silver)
+    price: 52000
+    price_rrc: 59990
+    quantity: 10
+    parameters:
+      "Screen Size (inches)": 11.0
+      "Resolution (pixels)": 2560x1600
+      "Internal Memory (GB)": 256
+      "Color": silver
+      "Processor": Snapdragon 8 Gen 1
+      "RAM (GB)": 8
+ 
