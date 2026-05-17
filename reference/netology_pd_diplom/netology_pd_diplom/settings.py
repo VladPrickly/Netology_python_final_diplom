@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'debug_toolbar',
     'backend',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -168,6 +169,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
 
+    # Схема по умолчанию для drf-spectacular
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -187,3 +190,44 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_MONITORING = True
 FLOWER_PORT = 5555
 FLOWER_BASIC_AUTH = os.getenv('FLOWER_BASIC_AUTH', '')
+
+# Конфигурация DRF SPECTACULAR
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Netology Python Final Diplom API',
+    'DESCRIPTION': 'API для интернет-магазина: пользователи, товары, заказы, импорт прайс-листов',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,  # Ускорить отдачу Swagger UI
+
+    # Раздельные схемы для запроса/ответа (улучшает читаемость)
+    'COMPONENT_SPLIT_REQUEST': True,
+
+    # Настройки аутентификации в Swagger UI
+    'SECURITY': [
+        {'TokenAuth': []},  # Для DRF TokenAuthentication
+    ],
+    'COMPONENTS': {
+        'securitySchemes': {
+            'TokenAuth': {
+                'type': 'apiKey',
+                'in': 'header',
+                'name': 'Authorization',
+                'description': 'Авторизация: `Token <ваш_токен>`',
+            },
+        },
+    },
+
+    # Локализация (опционально)
+    'ENUM_NAME_OVERRIDES': {
+        'OrderStatusEnum': 'backend.models.Order.Status',
+    },
+
+    # Исключение лишних эндпоинтов из документации
+    'PREPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.preprocess_exclude_path_format',
+    ],
+
+    # Пост-обработка схемы (добавить примеры ответов)
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.postprocess_schema_enums',
+    ],
+}
