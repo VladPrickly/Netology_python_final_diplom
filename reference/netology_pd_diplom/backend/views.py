@@ -21,7 +21,7 @@ from backend.models import Shop, Category, Product, ProductInfo, Parameter, Prod
     Contact, ConfirmEmailToken
 from backend.serializers import UserSerializer, CategorySerializer, ShopSerializer, ProductInfoSerializer, \
     OrderItemSerializer, OrderSerializer, ContactSerializer
-from backend.signals import new_user_registered, new_order
+# from backend.signals import new_user_registered, new_order
 
 
 class RegisterAccount(APIView):
@@ -442,7 +442,8 @@ class PartnerUpdate(APIView):
                 shop, _ = Shop.objects.get_or_create(name=data['shop'], user_id=request.user.id)
 
                 # асинхронный импорт товаров
-                do_import.delay(shop=shop, user_id=request.user.id, url=url, data=data)
+                do_import.delay(shop_id=shop.id, user_id=request.user.id, url=url, data=data)
+                return JsonResponse({'Status': True})
 
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
 
@@ -719,7 +720,7 @@ class OrderView(APIView):
                     return JsonResponse({'Status': False, 'Errors': 'Неправильно указаны аргументы'})
                 else:
                     if is_updated:
-                        new_order.send(sender=self.__class__, user_id=request.user.id)
+                        # new_order.send(sender=self.__class__, user_id=request.user.id)
 
                         # асинхронная отправка email
                         send_email_confirm.delay(user_id=request.user.id, subject = 'Подтверждение заказа', body = 'Ваш заказ успешно подтвержден')

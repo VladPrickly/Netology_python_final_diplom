@@ -32,7 +32,7 @@ def send_email_confirm(user_id: int, subject: str, body: str, **kwargs):
 
 
 @shared_task(bind=True, max_retries=2, default_retry_delay=30)
-def do_import(shop: int, user_id: int, url: str, data):
+def do_import(shop_id: int, user_id: int, url: str, data):
     """
     Асинхронный импорт товаров из YAML по ссылке.
 
@@ -42,11 +42,12 @@ def do_import(shop: int, user_id: int, url: str, data):
     - загружает новые товары и параметры
 
     Args:
-        shop: ID магазина (для привязки товаров)
+        shop_id: ID магазина (для привязки товаров)
         user_id: ID пользователя-владельца
         url: Ссылка на YAML-файл прайс-листа
+        data: данные YAML-файл прайс-листа
     """
-
+    shop = Shop.objects.get(id=shop_id)
     for category in data['categories']:
         category_object, _ = Category.objects.get_or_create(id=category['id'], name=category['name'])
         category_object.shops.add(shop.id)
@@ -69,4 +70,4 @@ def do_import(shop: int, user_id: int, url: str, data):
                                             value=value)
 
     logger.info(f"Импорт завершён: магазин {shop.name}, товаров: {len(data.get('goods', []))}")
-    return JsonResponse({'Status': True})
+    return JsonResponse({'Status': 'success'})
