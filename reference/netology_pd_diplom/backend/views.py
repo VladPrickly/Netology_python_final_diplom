@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from ujson import loads as load_json
 from yaml import load as load_yaml, Loader
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 
 from backend.tasks import send_email_confirm, do_import
 from backend.models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter, Order, OrderItem, \
@@ -28,7 +29,7 @@ class RegisterAccount(APIView):
     """
     Для регистрации покупателей
     """
-
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
     # Регистрация методом POST
 
     def post(self, request, *args, **kwargs):
@@ -41,7 +42,7 @@ class RegisterAccount(APIView):
             Returns:
                 JsonResponse: The response indicating the status of the operation and any errors.
             """
-        # проверяем обязательные аргументы
+                # проверяем обязательные аргументы
         if {'first_name', 'last_name', 'email', 'password'}.issubset(request.data):
 
             # проверяем пароль на сложность
@@ -177,6 +178,7 @@ class LoginAccount(APIView):
     """
     Класс для авторизации пользователей
     """
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
 
     # Авторизация методом POST
     def post(self, request, *args, **kwargs):

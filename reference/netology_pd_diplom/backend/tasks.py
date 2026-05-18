@@ -25,7 +25,7 @@ def send_email_confirm(user_id: int, subject: str, body: str, **kwargs):
         msg = EmailMultiAlternatives(subject=subject, body=body, from_email=settings.EMAIL_HOST_USER, to=recipient_list)
         msg.send()
         logger.info(f"Email отправлен: {recipient_list}")
-        return {'status': 'success', 'recipients': len(recipient_list)}
+        return {'Status': 'success', 'recipients': len(recipient_list)}
 
     except Exception as e:
         logger.error(f"Ошибка отправки email: {e}")
