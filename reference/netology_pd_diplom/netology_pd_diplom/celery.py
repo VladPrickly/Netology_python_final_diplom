@@ -1,3 +1,5 @@
+# netology_pd_diplom/celery.py
+
 import os
 from celery import Celery
 

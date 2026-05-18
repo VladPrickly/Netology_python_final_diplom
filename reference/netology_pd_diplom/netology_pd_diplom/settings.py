@@ -182,6 +182,15 @@ REST_FRAMEWORK = {
     }
 }
 
+# CACHE для троттлинга
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'throttling',
+    }
+}
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
