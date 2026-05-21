@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'backend',
     'drf_spectacular',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -74,6 +75,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -103,6 +106,13 @@ DATABASES = {
     }
 }
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
+
+)
+
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -120,6 +130,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+SOCIAL_AUTH_GITHUB_KEY = 'your-client-id'
+SOCIAL_AUTH_GITHUB_SECRET = 'your-client-secret'
+
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = 'login'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -234,7 +251,7 @@ SPECTACULAR_SETTINGS = {
         },
     },
 
-    # Локализация (опционально)
+    # Локализация
     'ENUM_NAME_OVERRIDES': {
         'OrderStatusEnum': 'backend.models.Order.Status',
     },
@@ -244,7 +261,7 @@ SPECTACULAR_SETTINGS = {
         'drf_spectacular.hooks.preprocess_exclude_path_format',
     ],
 
-    # Пост-обработка схемы (добавить примеры ответов)
+    # Пост-обработка схемы
     'POSTPROCESSING_HOOKS': [
         'drf_spectacular.hooks.postprocess_schema_enums',
     ],

@@ -73,7 +73,7 @@ services:
     build: .
     container_name: flower
     ports:
-      - "5555:5555"  # Только localhost для безопасности
+      - "5555:5555"
     command: >
       sh -c "celery -A netology_pd_diplom flower 
              --port=5555 

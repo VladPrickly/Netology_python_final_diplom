@@ -23,17 +23,13 @@ urlpatterns = [
     path('', views.index, name='home'),
     path('admin/', admin.site.urls, name='admin'),
     path('api/v1/', include('backend.urls', namespace='backend')),
-    path("__debug__/", include("debug_toolbar.urls")),
+    path('__debug__/', include("debug_toolbar.urls")),
+    path('schema/swagger-ui', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'), # Swagger UI (интерактивная документация)
+    path('schema/redoc', SpectacularRedocView.as_view(url_name='schema'), name='redoc'), # ReDoc (альтернативный интерфейс документации)
+    path('schema', SpectacularAPIView.as_view(), name='schema'),  # Схема OpenAPI в формате YAML
+    path('social-oauth/', include('social_django.urls', namespace='social')),  # Авторизация через социальные сети
 
-    # Схема OpenAPI в формате YAML
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-
-    # Swagger UI (интерактивная документация)
-    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-
-    # ReDoc (альтернативный интерфейс документации)
-    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-]
+] #+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.site.site_header = "Панель администрирования"
 

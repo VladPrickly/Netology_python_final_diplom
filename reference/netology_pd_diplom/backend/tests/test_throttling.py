@@ -38,7 +38,7 @@ class AuthThrottlingTestCase(TestCase):
         Тест: регистрация ограничена для анонимных пользователей.
         После N попыток должен вернуться 429.
         """
-        url = '/api/v1/user/register'
+        url = 'http://127.0.0.1:8000/api/v1/user/register'
 
         # Первые 3 запроса должны пройти
         for i in range(3):
@@ -83,7 +83,7 @@ class AuthThrottlingTestCase(TestCase):
         """
         Тест: вход ограничен для защиты от brute-force.
         """
-        url = '/api/v1/user/login'
+        url = 'http://127.0.0.1:8000/api/v1/user/login'
 
         # Создаём тестового пользователя для корректной проверки
         User.objects.create_user(
@@ -132,11 +132,11 @@ class AuthThrottlingTestCase(TestCase):
         )
         self.client.force_authenticate(user=user)
 
-        url = '/api/v1/user/register'
+        url = 'http://127.0.0.1:8000/api/v1/user/register'
 
         # Делаем больше запросов, чем лимит анонимного клиента
         for i in range(10):
-            response = self.client.get('/api/v1/products')
+            response = self.client.get('http://127.0.0.1:8000/api/v1/products')
             if response.status_code == status.HTTP_429_TOO_MANY_REQUESTS:
                 pass
 
