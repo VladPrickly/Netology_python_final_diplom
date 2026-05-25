@@ -111,10 +111,9 @@ DATABASES = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.google.GoogleOAuth2',
-
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 # Password validation
@@ -135,12 +134,41 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-SOCIAL_AUTH_GITHUB_KEY = 'your-client-id'
-SOCIAL_AUTH_GITHUB_SECRET = 'your-client-secret'
-
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = 'login'
 
+# social auth configs for github
+SOCIAL_AUTH_GITHUB_KEY = os.getenv('GITHUB_CLIENT_ID')
+SOCIAL_AUTH_GITHUB_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_LOGIN_URL = '/login/'
+
+
+# Pipeline для кастомизации процесса аутентификации
+SOCIAL_AUTH_PIPELINE = (
+    # Стандартные шаги social-auth
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+
+    # Если пользователь новый — создаём его
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+
+    # Кастомный шаг: привязка к существующему пользователю по email
+    'backend.pipeline.associate_by_email',
+
+    # Привязка социального аккаунта к пользователю
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+
+    # Кастомный шаг: заполнение профиля из GitHub
+    'backend.pipeline.set_user_profile_from_github',
+
+    # Финальный шаг
+    'social_core.pipeline.user.user_details',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

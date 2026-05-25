@@ -19,9 +19,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-# 👇 Импортируем admin из baton.autodiscover
+# Импортируем admin из baton.autodiscover
 from baton.autodiscover import admin
-
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
