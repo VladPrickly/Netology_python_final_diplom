@@ -2,19 +2,19 @@
 from django.test import TestCase, override_settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
 
 User = get_user_model()
 
 
-class AuthThrottlingTestCase(TestCase):
+class AuthThrottlingTestCase(APITestCase):
     """
     Тесты троттлинга для эндпоинтов аутентификации.
     """
 
     def setUp(self):
-        self.client = APIClient()
+        # self.client = APIClient()
         cache.clear()
 
     def tearDown(self):
@@ -29,16 +29,15 @@ class AuthThrottlingTestCase(TestCase):
                 'rest_framework.throttling.AnonRateThrottle',
             ],
             'DEFAULT_THROTTLE_RATES': {
-                'anon': '3/minute',  # 3 запроса в минуту для тестов
+                'anon': '3/minute', # 3 попытки входа в минуту для тестов
             }
         }
     )
     def test_register_account_throttling(self):
         """
-        Тест: регистрация ограничена для анонимных пользователей.
-        После N попыток должен вернуться 429.
+        Тест: регистрация ограничена для анонимных пользователей. После 3 попыток должен вернуться 429.
         """
-        url = 'http://127.0.0.1:8000/api/v1/user/register'
+        url = '/api/v1/user/register'
 
         # Первые 3 запроса должны пройти
         for i in range(3):
@@ -69,13 +68,20 @@ class AuthThrottlingTestCase(TestCase):
             "После исчерпания лимита должен вернуться 429"
         )
 
+        if isinstance(response.data, dict):
+            self.assertTrue(
+                'retry_after' in response.data or 'detail' in response.data,
+                "Ответ 429 должен содержать информацию о повторной попытке"
+            )
+
+
     @override_settings(
         REST_FRAMEWORK={
             'DEFAULT_THROTTLE_CLASSES': [
                 'rest_framework.throttling.AnonRateThrottle',
             ],
             'DEFAULT_THROTTLE_RATES': {
-                'anon': '5/minute',  # 5 попыток входа в минуту для тестов
+                'anon': '3/minute',  # 3 попыток входа в минуту для тестов
             }
         }
     )
@@ -83,18 +89,18 @@ class AuthThrottlingTestCase(TestCase):
         """
         Тест: вход ограничен для защиты от brute-force.
         """
-        url = 'http://127.0.0.1:8000/api/v1/user/login'
+        url = '/api/v1/user/login'
 
         # Создаём тестового пользователя для корректной проверки
-        User.objects.create_user(
+        user, _ = User.objects.get_or_create(
             username='testuser',
             email='test@example.com',
             password='correct_password',
-            type='buyer'
+            type='buyer',
         )
 
-        # Первые 5 попыток входа должны пройти
-        for i in range(5):
+        # Первые 3 попыток входа должны пройти
+        for i in range(3):
             response = self.client.post(url, {
                 'email': 'test@example.com',
                 'password': 'wrong_password'
@@ -120,10 +126,8 @@ class AuthThrottlingTestCase(TestCase):
 
     def test_login_throttling_does_not_affect_authenticated_users(self):
         """
-        Тест: авторизованный пользователь не ограничен лимитом.
-
+        Авторизованный пользователь не ограничен лимитом.
         """
-        # Создаём и авторизуем пользователя
         user = User.objects.create_user(
             username='auth_user',
             email='auth@example.com',
@@ -132,12 +136,11 @@ class AuthThrottlingTestCase(TestCase):
         )
         self.client.force_authenticate(user=user)
 
-        url = 'http://127.0.0.1:8000/api/v1/user/register'
-
-        # Делаем больше запросов, чем лимит анонимного клиента
-        for i in range(10):
-            response = self.client.get('http://127.0.0.1:8000/api/v1/products')
-            if response.status_code == status.HTTP_429_TOO_MANY_REQUESTS:
-                pass
-
-        self.assertTrue(True)
+        # Делаем 20 запросов (больше лимита anon)
+        for i in range(20):
+            response = self.client.get('/api/v1/products')
+            self.assertNotEqual(
+                response.status_code,
+                status.HTTP_429_TOO_MANY_REQUESTS,
+                f"Авторизованный пользователь не должен быть ограничен"
+            )

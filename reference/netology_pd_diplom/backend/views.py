@@ -59,6 +59,7 @@ class RegisterAccount(APIView):
 
                 user_serializer = UserSerializer(data=request.data)
                 if user_serializer.is_valid():
+                    request.data.update({})
                     # сохраняем пользователя
                     user = user_serializer.save()
                     user.set_password(request.data['password'])

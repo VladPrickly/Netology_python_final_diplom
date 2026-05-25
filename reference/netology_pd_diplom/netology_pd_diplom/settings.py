@@ -28,18 +28,20 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 INTERNAL_IPS = ['127.0.0.1', ]
 
 # Application definition
 
 INSTALLED_APPS = [
+    'baton',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
     'django_rest_passwordreset',
@@ -48,6 +50,7 @@ INSTALLED_APPS = [
     'backend',
     'drf_spectacular',
     'social_django',
+    'baton.autodiscover',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'baton.autodiscover.AutodiscoverMixin',
 ]
 
 ROOT_URLCONF = 'netology_pd_diplom.urls'
@@ -155,6 +159,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+if DEBUG:
+    from django.conf.urls.static import static
+
 
 AUTH_USER_MODEL = 'backend.User'
 
@@ -178,13 +190,16 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-
     ),
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
-
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
+
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
+    ],
 
     # Схема по умолчанию для drf-spectacular
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
@@ -265,4 +280,68 @@ SPECTACULAR_SETTINGS = {
     'POSTPROCESSING_HOOKS': [
         'drf_spectacular.hooks.postprocess_schema_enums',
     ],
+}
+
+# Конфигурация BATON
+BATON = {
+    # Внешний вид
+    'SITE_HEADER': 'Netology Diplom Admin',
+    'SITE_TITLE': 'Админ-панель',
+    'INDEX_TITLE': 'Panel Administration',
+    'SUPPORT_HREF': 'https://github.com/VladPrickly/Netology_python_final_diplom',
+    'CONFIRM_UNSAVED_CHANGES': True,
+    'SHOW_MULTIPART_UPLOADING': True,
+    'ENABLE_IMAGES_PREVIEW': True,
+    'COLLAPSABLE_USER_AREA': False,
+
+
+    'DEFAULT_THEME': 'light', # Тема по умолчанию: 'light' или 'dark'
+
+    # Графики на дашборде (требуется chart.js)
+    'CHARTJS_COLORS': {
+        'primary': '#3b82f6',
+        'success': '#22c55e',
+        'warning': '#f59e0b',
+        'danger': '#ef4444',
+    },
+
+    # Кастомное меню (левый сайдбар)
+    'MENU': (
+        # Раздел с иконкой
+        {'type': 'title', 'label': 'Основное', 'icon': 'dashboard'},
+
+        # Стандартное приложение
+        {'type': 'app', 'name': 'auth', 'label': 'Пользователи', 'icon': 'people'},
+
+        # Конкретная модель
+        {'type': 'model', 'app': 'backend', 'name': 'product', 'label': 'Товары', 'icon': 'inventory_2'},
+        {'type': 'model', 'app': 'backend', 'name': 'category', 'label': 'Категории', 'icon': 'category'},
+        {'type': 'model', 'app': 'backend', 'name': 'order', 'label': 'Заказы', 'icon': 'shopping_cart'},
+        {'type': 'model', 'app': 'backend', 'name': 'shop', 'label': 'Магазины', 'icon': 'store'},
+
+        # Внешняя ссылка
+        {'type': 'free', 'label': 'Документация API', 'url': '/schema/swagger-ui/', 'icon': 'description',
+         'new_browser_tab': True},
+
+        # Разделитель
+        {'type': 'divider'},
+
+        # Ссылка на настройки
+        {'type': 'free', 'label': 'Настройки', 'url': '/admin/baton/batonsettings/', 'icon': 'settings'},
+    ),
+
+    # Отображение меню
+    'MENU_ALWAYS_COLLAPSED': True,  # Меню развёрнуто по умолчанию
+    'SHOW_CHANGELIST_FILTERS': True,  # Фильтры в списке объектов
+
+    # Поиск
+    'SHOW_MULTIPART_FILTERS': True,  # Фильтры для файловых полей
+
+    # Список объектов (changelist)
+    'CHANGELIST_FILTERS_IN_MODAL': True,  # Фильтры в модальном окне
+    'CHANGELIST_FILTERS_FORM': True,  # Красивая форма фильтров
+
+    # Редактирование объекта
+    'FORM_TABS_BY_FIELDSETS': True,  # Вкладки на основе fieldsets
+    'FORM_RENDERING': 'horizontal',  # Горизонтальная форма (более компактная)
 }
