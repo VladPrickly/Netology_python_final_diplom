@@ -1,16 +1,3 @@
-### Python ###
-.idea/
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-*.sqlite3
-env/
-
-### Project specific ###
-settings_local.py
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -117,3 +104,4 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+/.cocoindex_code/
