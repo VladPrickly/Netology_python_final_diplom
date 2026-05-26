@@ -31,7 +31,6 @@ class RegisterAccount(APIView):
     """
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
     # Регистрация методом POST
-
     def post(self, request, *args, **kwargs):
         """
             Process a POST request and create a new user.

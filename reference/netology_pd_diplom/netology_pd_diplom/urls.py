@@ -34,10 +34,10 @@ urlpatterns = [
     path('__debug__/', include("debug_toolbar.urls")),
     path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'), # Swagger UI (интерактивная документация)
     path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'), # ReDoc (альтернативный интерфейс документации)
-    path('schema', SpectacularAPIView.as_view(), name='schema'),  # Схема OpenAPI в формате YAML
+    path('schema/', SpectacularAPIView.as_view(), name='schema'),  # Схема OpenAPI в формате YAML
     path('social-oauth/', include('social_django.urls', namespace='social')),  # Авторизация через социальные сети
 
-] #+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 # Обслуживание медиа-файлов в разработке
 if settings.DEBUG:

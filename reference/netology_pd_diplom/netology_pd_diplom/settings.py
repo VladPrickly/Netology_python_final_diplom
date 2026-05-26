@@ -93,13 +93,7 @@ WSGI_APPLICATION = 'netology_pd_diplom.wsgi.application'
 
 DATABASES = {
 
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-#
-#
-# }
+
     'default': {
         'ENGINE': os.getenv('DB_ENGINE'),
         'NAME': os.getenv('DB_NAME'),
@@ -134,14 +128,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = 'login'
+# LOGIN_REDIRECT_URL = '/'
+# LOGIN_URL = 'user-login'
 
 # social auth configs for github
 SOCIAL_AUTH_GITHUB_KEY = os.getenv('GITHUB_CLIENT_ID')
 SOCIAL_AUTH_GITHUB_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
+
+# social auth configs for google
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('GOOGLE_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
-SOCIAL_AUTH_LOGIN_URL = '/login/'
+SOCIAL_AUTH_LOGIN_URL = 'user-login'
 
 
 # Pipeline для кастомизации процесса аутентификации
@@ -254,7 +253,7 @@ CACHES = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Celery settings
+# Конфигурация Celery
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/1')
 CELERY_ACCEPT_CONTENT = ['json']
@@ -264,7 +263,7 @@ CELERY_TIMEZONE = 'UTC'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-# Flower settings
+# Конфигурация Flower
 CELERY_MONITORING = True
 FLOWER_PORT = 5555
 FLOWER_BASIC_AUTH = os.getenv('FLOWER_BASIC_AUTH', '')
@@ -317,6 +316,8 @@ BATON = {
     'SITE_TITLE': 'Админ-панель',
     'INDEX_TITLE': 'Panel Administration',
     'SUPPORT_HREF': 'https://github.com/VladPrickly/Netology_python_final_diplom',
+    'COPYRIGHT': '© 2026 Vlad Prickly',
+    # 'POWERED_BY': '<a href="https://github.com/otto-torino/django-baton" target="_blank">otto-torino </a>',
     'CONFIRM_UNSAVED_CHANGES': True,
     'SHOW_MULTIPART_UPLOADING': True,
     'ENABLE_IMAGES_PREVIEW': True,
@@ -325,7 +326,7 @@ BATON = {
 
     'DEFAULT_THEME': 'light', # Тема по умолчанию: 'light' или 'dark'
 
-    # Графики на дашборде (требуется chart.js)
+    # Графики на дашборде
     'CHARTJS_COLORS': {
         'primary': '#3b82f6',
         'success': '#22c55e',
@@ -348,7 +349,9 @@ BATON = {
         {'type': 'model', 'app': 'backend', 'name': 'shop', 'label': 'Магазины', 'icon': 'store'},
 
         # Внешняя ссылка
-        {'type': 'free', 'label': 'Документация API', 'url': '/schema/swagger-ui/', 'icon': 'description',
+        {'type': 'free', 'label': 'Документация API (Swagger)', 'url': '/schema/swagger-ui/', 'icon': 'description',
+         'new_browser_tab': True},
+        {'type': 'free', 'label': 'Альтернативный интерфейс документации (ReDoc)', 'url': '/schema/redoc/', 'icon': 'description',
          'new_browser_tab': True},
 
         # Разделитель
