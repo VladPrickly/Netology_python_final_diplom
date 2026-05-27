@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django_rest_passwordreset',
     'django_celery_results',
     'debug_toolbar',
+    'imagekit',
     'backend',
     'drf_spectacular',
     'social_django',
@@ -200,6 +201,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+IMAGE_UPLOAD_MAX_SIZE = int(os.getenv('IMAGE_UPLOAD_MAX_SIZE', 5 * 1024 * 1024))
+IMAGE_UPLOAD_ALLOWED_FORMATS = tuple(
+    item.strip().upper()
+    for item in os.getenv('IMAGE_UPLOAD_ALLOWED_FORMATS', 'JPEG,JPG,PNG,WEBP').split(',')
+    if item.strip()
+)
 
 if DEBUG:
     from django.conf.urls.static import static

@@ -1,4 +1,5 @@
 from distutils.util import strtobool
+from django.conf import settings
 from django.shortcuts import render
 from rest_framework.request import Request
 from django.contrib.auth import authenticate
@@ -13,17 +14,22 @@ from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 from ujson import loads as load_json
 from yaml import load as load_yaml, Loader
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 
-from backend.tasks import send_email_confirm, do_import
+from backend.tasks import send_email_confirm, do_import, generate_avatar_thumbnails, generate_product_thumbnails
 from backend.models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter, Order, OrderItem, \
     Contact, ConfirmEmailToken
 from backend.serializers import UserSerializer, CategorySerializer, ShopSerializer, ProductInfoSerializer, \
     OrderItemSerializer, OrderSerializer, ContactSerializer
 # from backend.signals import new_user_registered, new_order
+
+
+class ConfiguredAnonRateThrottle(AnonRateThrottle):
+    def get_rate(self):
+        return settings.REST_FRAMEWORK.get('DEFAULT_THROTTLE_RATES', {}).get(self.scope)
 
 
 class SentryDebugView(APIView):
@@ -37,7 +43,8 @@ class RegisterAccount(APIView):
     """
     Для регистрации покупателей
     """
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    throttle_classes = [ConfiguredAnonRateThrottle]
+    permission_classes = [AllowAny]
     # Регистрация методом POST
     def post(self, request, *args, **kwargs):
         """
@@ -126,6 +133,7 @@ class AccountDetails(APIView):
     Attributes:
     - None
     """
+    permission_classes = [AllowAny]
 
     # получить данные
     def get(self, request: Request, *args, **kwargs):
@@ -176,7 +184,10 @@ class AccountDetails(APIView):
         # проверяем остальные данные
         user_serializer = UserSerializer(request.user, data=request.data, partial=True)
         if user_serializer.is_valid():
-            user_serializer.save()
+            avatar_before = request.user.avatar.name if request.user.avatar else None
+            user = user_serializer.save()
+            if 'avatar' in request.FILES and user.avatar and user.avatar.name != avatar_before:
+                generate_avatar_thumbnails.delay(user.id)
             return JsonResponse({'Status': True})
         else:
             return JsonResponse({'Status': False, 'Errors': user_serializer.errors})
@@ -186,7 +197,8 @@ class LoginAccount(APIView):
     """
     Класс для авторизации пользователей
     """
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    throttle_classes = [ConfiguredAnonRateThrottle]
+    permission_classes = [AllowAny]
 
     # Авторизация методом POST
     def post(self, request, *args, **kwargs):
@@ -239,6 +251,7 @@ class ProductInfoView(APIView):
     Attributes:
     - None
     """
+    permission_classes = [AllowAny]
 
     def get(self, request: Request, *args, **kwargs):
         """
@@ -269,6 +282,30 @@ class ProductInfoView(APIView):
         serializer = ProductInfoSerializer(queryset, many=True)
 
         return Response(serializer.data)
+
+    def post(self, request: Request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+
+        if request.user.type != 'shop':
+            return JsonResponse({'Status': False, 'Error': 'Только для магазинов'}, status=403)
+
+        product_info_id = request.data.get('id')
+        if not product_info_id or not str(product_info_id).isdigit() or 'image' not in request.FILES:
+            return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
+
+        product_info = ProductInfo.objects.filter(id=product_info_id, shop__user_id=request.user.id).first()
+        if not product_info:
+            return JsonResponse({'Status': False, 'Error': 'Permission denied'}, status=403)
+
+        image_before = product_info.image.name if product_info.image else None
+        serializer = ProductInfoSerializer(product_info, data={'image': request.FILES['image']}, partial=True)
+        if serializer.is_valid():
+            product_info = serializer.save()
+            if product_info.image and product_info.image.name != image_before:
+                generate_product_thumbnails.delay(product_info.id)
+            return JsonResponse({'Status': True})
+        return JsonResponse({'Status': False, 'Errors': serializer.errors})
 
 
 class BasketView(APIView):

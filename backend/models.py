@@ -5,6 +5,16 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_rest_passwordreset.tokens import get_token_generator
 
+from backend.validators import validate_image_upload
+
+
+def user_avatar_upload_path(instance, filename):
+    return f'users/{instance.pk or "new"}/avatar/{filename}'
+
+
+def product_image_upload_path(instance, filename):
+    return f'products/{instance.pk or "new"}/image/{filename}'
+
 STATE_CHOICES = (
     ('basket', 'Статус корзины'),
     ('new', 'Новый'),
@@ -92,6 +102,31 @@ class User(AbstractUser):
         ),
     )
     type = models.CharField(verbose_name='Тип пользователя', choices=USER_TYPE_CHOICES, max_length=5, default='buyer')
+    avatar = models.ImageField(
+        verbose_name='Аватар',
+        upload_to=user_avatar_upload_path,
+        validators=[validate_image_upload],
+        null=True,
+        blank=True,
+    )
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_avatar = type(self).objects.filter(pk=self.pk).values_list('avatar', flat=True).first()
+            if old_avatar and old_avatar != self.avatar.name:
+                from backend.image_specs import AVATAR_THUMBNAIL_SPECS
+                from backend.media import delete_image_files
+
+                old_file = self._meta.get_field('avatar').attr_class(self, self._meta.get_field('avatar'), old_avatar)
+                delete_image_files(old_file, AVATAR_THUMBNAIL_SPECS)
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        from backend.image_specs import AVATAR_THUMBNAIL_SPECS
+        from backend.media import delete_image_files
+
+        delete_image_files(self.avatar, AVATAR_THUMBNAIL_SPECS)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -162,6 +197,31 @@ class ProductInfo(models.Model):
     quantity = models.PositiveIntegerField(verbose_name='Количество')
     price = models.PositiveIntegerField(verbose_name='Цена')
     price_rrc = models.PositiveIntegerField(verbose_name='Рекомендуемая розничная цена')
+    image = models.ImageField(
+        verbose_name='Изображение',
+        upload_to=product_image_upload_path,
+        validators=[validate_image_upload],
+        null=True,
+        blank=True,
+    )
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_image = type(self).objects.filter(pk=self.pk).values_list('image', flat=True).first()
+            if old_image and old_image != self.image.name:
+                from backend.image_specs import PRODUCT_THUMBNAIL_SPECS
+                from backend.media import delete_image_files
+
+                old_file = self._meta.get_field('image').attr_class(self, self._meta.get_field('image'), old_image)
+                delete_image_files(old_file, PRODUCT_THUMBNAIL_SPECS)
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        from backend.image_specs import PRODUCT_THUMBNAIL_SPECS
+        from backend.media import delete_image_files
+
+        delete_image_files(self.image, PRODUCT_THUMBNAIL_SPECS)
+        super().delete(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Информация о продукте'
