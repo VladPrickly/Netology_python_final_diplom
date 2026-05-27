@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тестирование API | Netology Diplom</title>
+    <style>
+        body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { color: #667eea; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        .endpoint {
+            background: #2d2d2d;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+        .method {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .get { background: #61affe; color: white; }
+        .post { background: #49cc90; color: white; }
+        .put { background: #fca130; color: white; }
+        .delete { background: #f93e3e; color: white; }
+        code {
+            background: #111;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #ce9178;
+        }
+        .token {
+            background: #252526;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+        .copy-btn:hover { background: #556cd6; }
+        .curl {
+            background: #111;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔧 Тестирование API эндпоинтов</h1>
+
+    <p>Пользователь: <strong>{{ user.username }}</strong> (ID: {{ user.id }})</p>
+
+    {% if token %}
+    <div class="token">
+        <strong>Ваш токен:</strong><br>
+        <code id="tokenValue">{{ token.key }}</code>
+        <button class="copy-btn" onclick="copyToken()">📋 Копировать</button>
+    </div>
+    {% else %}
+    <p style="color: #f93e3e;">⚠️ У пользователя нет токена. Создайте через API или админку.</p>
+    {% endif %}
+
+    <h3 style="margin-top: 30px;">📦 Доступные эндпоинты:</h3>
+
+    <div class="endpoint">
+        <span class="method get">GET</span>
+        <code>/api/categories/</code> — список категорий
+    </div>
+
+    <div class="endpoint">
+        <span class="method get">GET</span>
+        <code>/api/products/</code> — список товаров
+    </div>
+
+    <div class="endpoint">
+        <span class="method post">POST</span>
+        <code>/api/cart/</code> — добавить товар в корзину
+    </div>
+
+    <div class="endpoint">
+        <span class="method get">GET</span>
+        <code>/api/orders/</code> — список заказов пользователя
+    </div>
+
+    <h3 style="margin-top: 30px;">📋 Пример curl-запроса:</h3>
+    <div class="curl">
+curl -X GET http://127.0.0.1:8000/api/products/ \
+  -H "Authorization: Token <span id="curlToken">{{ token.key|default:'YOUR_TOKEN' }}</span>"
+    </div>
+
+    <p style="margin-top: 30px;">
+        <a href="{% url 'auth:success' %}" style="color: #667eea;">← Назад к профилю</a>
+    </p>
+</div>
+
+<script>
+function copyToken() {
+    const token = document.getElementById('tokenValue').textContent;
+    navigator.clipboard.writeText(token).then(() => {
+        alert('Токен скопирован!');
+    });
+}
+</script>
+</body>
+</html>

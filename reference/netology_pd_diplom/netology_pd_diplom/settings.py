@@ -17,7 +17,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -28,7 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 INTERNAL_IPS = ['127.0.0.1', ]
 
 # Application definition
@@ -62,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
     # 'baton.autodiscover.AutodiscoverMixin',
 ]
 
@@ -70,8 +72,7 @@ ROOT_URLCONF = 'netology_pd_diplom.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'backend', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -105,9 +106,10 @@ DATABASES = {
 }
 
 AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.google.GoogleOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
+    # 'django.contrib.auth.backends.ModelBackend',
 )
 
 # Password validation
@@ -128,20 +130,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# LOGIN_REDIRECT_URL = '/'
-# LOGIN_URL = 'user-login'
-
 # social auth configs for github
 SOCIAL_AUTH_GITHUB_KEY = os.getenv('GITHUB_CLIENT_ID')
 SOCIAL_AUTH_GITHUB_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
+SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']  # Запрос email для ассоциации
 
 # social auth configs for google
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('GOOGLE_CLIENT_ID')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+]  # Базовые права для профиля
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
-SOCIAL_AUTH_LOGIN_URL = 'user-login'
+LOGIN_URL = '/admin'
+LOGIN_REDIRECT_URL = '/'
 
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/auth/success/'      # После успешного входа
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/auth/error/'           # При ошибке
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/auth/success/?new=1'
 
 # Pipeline для кастомизации процесса аутентификации
 SOCIAL_AUTH_PIPELINE = (
@@ -168,6 +176,8 @@ SOCIAL_AUTH_PIPELINE = (
     # Финальный шаг
     'social_core.pipeline.user.user_details',
 )
+
+SOCIAL_AUTH_ASSOCIATE_BY_EMAIL = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -225,7 +235,8 @@ REST_FRAMEWORK = {
     ),
 
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly' if DEBUG
+        else 'rest_framework.permissions.IsAdminUser',
     ],
 
     # Схема по умолчанию для drf-spectacular
@@ -375,4 +386,15 @@ BATON = {
     # Редактирование объекта
     'FORM_TABS_BY_FIELDSETS': True,  # Вкладки на основе fieldsets
     'FORM_RENDERING': 'horizontal',  # Горизонтальная форма (более компактная)
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
+    'loggers': {
+        'social': {'handlers': ['console'], 'level': 'DEBUG', 'propagate': True},
+        'django': {'handlers': ['console'], 'level': 'INFO'},
+    },
 }

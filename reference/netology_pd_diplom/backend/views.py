@@ -1,5 +1,5 @@
 from distutils.util import strtobool
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework.request import Request
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
@@ -23,6 +23,12 @@ from backend.models import Shop, Category, Product, ProductInfo, Parameter, Prod
 from backend.serializers import UserSerializer, CategorySerializer, ShopSerializer, ProductInfoSerializer, \
     OrderItemSerializer, OrderSerializer, ContactSerializer
 # from backend.signals import new_user_registered, new_order
+
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.conf import settings
+import logging
+
 
 
 class RegisterAccount(APIView):
@@ -179,7 +185,6 @@ class LoginAccount(APIView):
     Класс для авторизации пользователей
     """
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
-
     # Авторизация методом POST
     def post(self, request, *args, **kwargs):
         """
@@ -735,3 +740,57 @@ class OrderView(APIView):
 
 def index(request):
     return render(request, 'backend/index.html')
+
+
+
+# social-auth functions
+
+logger = logging.getLogger('social')
+
+def auth_login(request):
+    """Страница входа с кнопками социальных сетей (GitHub + Google)"""
+    if request.user.is_authenticated:
+        return redirect(settings.SOCIAL_AUTH_LOGIN_REDIRECT_URL)
+
+    # Определяем доступные провайдеры
+    providers = []
+    if getattr(settings, 'SOCIAL_AUTH_GITHUB_KEY', None):
+        providers.append({'name': 'github', 'label': 'GitHub', 'enabled': True})
+    if getattr(settings, 'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', None):
+        providers.append({'name': 'google-oauth2', 'label': 'Google', 'enabled': True})
+
+    return render(request, 'auth/login.html', {'providers': providers})
+
+
+@login_required
+def auth_success(request):
+    """Страница успешной авторизации"""
+    backend = request.session.get('social_auth_backend', '')
+    # Определяем читаемое название провайдера
+    if 'github' in backend.lower():
+        backend_display = 'github'
+    elif 'google' in backend.lower():
+        backend_display = 'google-oauth2'
+    else:
+        backend_display = backend
+
+    return render(request, 'auth/auth_success.html', {
+        'backend': backend_display
+    })
+
+
+def auth_error(request):
+    """Страница ошибки авторизации"""
+    error = request.GET.get('error', request.GET.get('error_description', 'Неизвестная ошибка'))
+    return render(request, 'auth/auth_error.html', {'error': error})
+
+
+@login_required
+def test_api(request):
+    """Тестовая страница для проверки API-доступа с токеном"""
+    token = getattr(request.user, 'auth_token', None)
+    return render(request, 'auth/test_api.html', {
+        'user': request.user,
+        'token': token
+    })
+

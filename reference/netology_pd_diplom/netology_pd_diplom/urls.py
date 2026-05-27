@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
+from django.shortcuts import redirect
 # from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -21,9 +21,9 @@ from django.conf.urls.static import static
 
 # Импортируем admin из baton.autodiscover
 from baton.autodiscover import admin
-
+# from django.contrib import admin
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
-
+from django.contrib.auth import views as auth_views
 from backend import views
 
 urlpatterns = [
@@ -36,6 +36,15 @@ urlpatterns = [
     path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'), # ReDoc (альтернативный интерфейс документации)
     path('schema/', SpectacularAPIView.as_view(), name='schema'),  # Схема OpenAPI в формате YAML
     path('social-oauth/', include('social_django.urls', namespace='social')),  # Авторизация через социальные сети
+
+    # Тестовые HTML-страницы для отладки
+    path('auth/login/', views.auth_login, name='login'),
+    path('auth/success/', views.auth_success, name='success'),
+    path('auth/error/', views.auth_error, name='error'),
+    path('auth/test-api/', views.test_api, name='test_api'),
+
+    # Выход из системы
+    path('auth/logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 
 ]
 

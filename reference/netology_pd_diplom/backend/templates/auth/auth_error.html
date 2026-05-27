@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ошибка | Netology Diplom</title>
+    <style>
+        :root { --error: #ef4444; --primary: #667eea; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 48px 40px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            text-align: center;
+        }
+        .error-icon {
+            width: 90px;
+            height: 90px;
+            background: var(--error);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 28px;
+            font-size: 42px;
+            color: white;
+        }
+        h1 { color: #1e293b; margin-bottom: 12px; font-size: 26px; }
+        .subtitle { color: #64748b; margin-bottom: 24px; font-size: 15px; }
+
+        .error-details {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 20px 0;
+            text-align: left;
+            font-family: monospace;
+            font-size: 13px;
+            color: #b91c1c;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .troubleshooting {
+            text-align: left;
+            margin: 24px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .troubleshooting h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 12px;
+        }
+        .troubleshooting ul {
+            list-style: none;
+            padding: 0;
+        }
+        .troubleshooting li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            font-size: 14px;
+            color: #475569;
+        }
+        .troubleshooting li::before {
+            content: '•';
+            position: absolute;
+            left: 8px;
+            color: var(--error);
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+        .provider-info {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 13px;
+            color: #64748b;
+        }
+        .provider-info code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon">✕</div>
+        <h1>❌ Ошибка авторизации</h1>
+        <p class="subtitle">Не удалось войти через социальную сеть</p>
+
+        {% if error %}
+        <div class="error-details">
+            <strong>Детали:</strong><br>
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <a href="{% url 'auth:login' %}" class="btn">
+            ← Попробовать снова
+        </a>
+
+        <div class="troubleshooting">
+            <h3>Возможные причины:</h3>
+            <ul>
+                <li>Неверный <code>CLIENT_ID</code> или <code>CLIENT_SECRET</code></li>
+                <li>Несовпадение <code>redirect_uri</code> в настройках OAuth App</li>
+                <li>Истёк срок действия кода авторизации (~10 минут)</li>
+                <li>Пользователь отменил доступ в диалоге провайдера</li>
+                <li>Отсутствует scope <code>user:email</code> для GitHub</li>
+            </ul>
+        </div>
+
+        <div class="provider-info">
+            <p><strong>Проверьте настройки:</strong></p>
+            <p>GitHub: <code>/settings/developers</code> → Ваш OAuth App</p>
+            <p>Google: <code>console.cloud.google.com</code> → Credentials</p>
+            <p style="margin-top: 12px;">
+                🔍 Логи Django: <code>python manage.py runserver</code> в консоли
+            </p>
+        </div>
+    </div>
+</body>
+</html>
