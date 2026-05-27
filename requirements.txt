@@ -47,6 +47,7 @@ referencing==0.37.0
 requests==2.34.2
 requests-oauthlib==2.0.0
 rpds-py==0.30.0
+sentry-sdk==2.60.0
 setuptools==82.0.1
 six==1.17.0
 social-auth-app-django==5.9.0

@@ -13,8 +13,18 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import sentry_sdk
 
 load_dotenv()
+
+sentry_sdk.init(
+    dsn=os.getenv('SENTRY_DSN'),
+    send_default_pii=True,
+    enable_logs=True,
+    traces_sample_rate=1.0,
+    profile_session_sample_rate=1.0,
+    profile_lifecycle='trace',
+)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -11,6 +11,7 @@ from django.http import JsonResponse, HttpResponse
 from requests import get
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from ujson import loads as load_json
@@ -23,6 +24,13 @@ from backend.models import Shop, Category, Product, ProductInfo, Parameter, Prod
 from backend.serializers import UserSerializer, CategorySerializer, ShopSerializer, ProductInfoSerializer, \
     OrderItemSerializer, OrderSerializer, ContactSerializer
 # from backend.signals import new_user_registered, new_order
+
+
+class SentryDebugView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        raise RuntimeError('Sentry debug endpoint triggered')
 
 
 class RegisterAccount(APIView):
