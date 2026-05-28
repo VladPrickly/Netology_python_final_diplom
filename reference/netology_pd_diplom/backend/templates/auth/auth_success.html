@@ -257,10 +257,10 @@
             <a href="/admin/" class="btn btn-secondary">
                 ⚙️ Django Admin
             </a>
-            <a href="{% url 'test-api' %}" class="btn btn-secondary">
+            <a href="{% url 'auth:test_api' as api_url %}{{ api_url }}" class="btn btn-secondary">
                 🔧 Тестировать API с токеном
             </a>
-            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+            <form action="{% url 'logout' as logout_url %}{{ logout_url }}" method="post" style="display:inline;">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger">
                     🚪 Выйти
@@ -277,6 +277,7 @@
         {% endif %}
     </div>
 
+    {% verbatim %}
     <script>
     function copyToken() {
         const token = document.getElementById('tokenValue').textContent;
@@ -288,5 +289,6 @@
         });
     }
     </script>
+    {% endverbatim %}
 </body>
 </html>

@@ -747,20 +747,29 @@ def index(request):
 
 logger = logging.getLogger('social')
 
+# def auth_login(request):
+#     """Страница входа с кнопками социальных сетей (GitHub + Google)"""
+#     if request.user.is_authenticated:
+#         return redirect(settings.SOCIAL_AUTH_LOGIN_REDIRECT_URL)
+#
+#     # Определяем доступные провайдеры
+#     providers = []
+#     if getattr(settings, 'SOCIAL_AUTH_GITHUB_KEY', None):
+#         providers.append({'name': 'github', 'label': 'GitHub', 'enabled': True})
+#     if getattr(settings, 'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', None):
+#         providers.append({'name': 'google-oauth2', 'label': 'Google', 'enabled': True})
+#
+#     return render(request, 'auth/login.html', {'providers': providers})
+
+
 def auth_login(request):
-    """Страница входа с кнопками социальных сетей (GitHub + Google)"""
     if request.user.is_authenticated:
         return redirect(settings.SOCIAL_AUTH_LOGIN_REDIRECT_URL)
 
-    # Определяем доступные провайдеры
-    providers = []
-    if getattr(settings, 'SOCIAL_AUTH_GITHUB_KEY', None):
-        providers.append({'name': 'github', 'label': 'GitHub', 'enabled': True})
-    if getattr(settings, 'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', None):
-        providers.append({'name': 'google-oauth2', 'label': 'Google', 'enabled': True})
-
-    return render(request, 'auth/login.html', {'providers': providers})
-
+    return render(request, 'auth/login.html', {
+        'google_enabled': bool(settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY),  # ← Явный флаг
+        'github_enabled': bool(settings.SOCIAL_AUTH_GITHUB_KEY),
+    })
 
 @login_required
 def auth_success(request):

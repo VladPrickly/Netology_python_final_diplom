@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ошибка | Netology Diplom</title>
+    <title>Ошибка авторизации | Netology Diplom</title>
     <style>
         :root { --error: #ef4444; --primary: #667eea; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -68,10 +68,7 @@
             color: #475569;
             margin-bottom: 12px;
         }
-        .troubleshooting ul {
-            list-style: none;
-            padding: 0;
-        }
+        .troubleshooting ul { list-style: none; padding: 0; }
         .troubleshooting li {
             padding: 8px 0;
             padding-left: 24px;
@@ -126,14 +123,15 @@
         <h1>❌ Ошибка авторизации</h1>
         <p class="subtitle">Не удалось войти через социальную сеть</p>
 
-        {% if error %}
+        {# ✅ Безопасный вывод ошибки #}
         <div class="error-details">
             <strong>Детали:</strong><br>
-            {{ error }}
+            {{ error|default:"Неизвестная ошибка. Проверьте настройки OAuth и логи Django." }}
         </div>
-        {% endif %}
 
-        <a href="{% url 'auth:login' %}" class="btn">
+        {# ✅ Безопасное получение URL (предотвращает NoReverseMatch) #}
+        {% url 'auth:login' as login_url %}
+        <a href="{{ login_url|default:'/auth/login/' }}" class="btn">
             ← Попробовать снова
         </a>
 
@@ -150,10 +148,10 @@
 
         <div class="provider-info">
             <p><strong>Проверьте настройки:</strong></p>
-            <p>GitHub: <code>/settings/developers</code> → Ваш OAuth App</p>
-            <p>Google: <code>console.cloud.google.com</code> → Credentials</p>
+            <p>GitHub: <code>Settings → Developer settings → OAuth Apps</code></p>
+            <p>Google: <code>console.cloud.google.com → APIs & Services → Credentials</code></p>
             <p style="margin-top: 12px;">
-                🔍 Логи Django: <code>python manage.py runserver</code> в консоли
+                🔍 Логи Django: запустите сервер с флагом <code>--verbosity 2</code>
             </p>
         </div>
     </div>

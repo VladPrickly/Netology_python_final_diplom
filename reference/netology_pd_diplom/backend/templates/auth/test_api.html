@@ -2,118 +2,138 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тестирование API | Netology Diplom</title>
     <style>
-        body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; }
-        h1 { color: #667eea; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; margin: 0; }
+        .container { max-width: 900px; margin: 0 auto; background: #252526; padding: 30px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        h1 { color: #667eea; border-bottom: 1px solid #444; padding-bottom: 12px; margin-top: 0; }
+        .info { color: #9cdcfe; margin-bottom: 20px; }
         .endpoint {
-            background: #2d2d2d;
+            background: #1e1e1e;
             border-radius: 6px;
-            padding: 15px;
-            margin: 15px 0;
+            padding: 12px 16px;
+            margin: 12px 0;
             border-left: 4px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .method {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-right: 10px;
-        }
+        .method { padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 13px; }
         .get { background: #61affe; color: white; }
         .post { background: #49cc90; color: white; }
-        .put { background: #fca130; color: white; }
-        .delete { background: #f93e3e; color: white; }
-        code {
+        code { color: #ce9178; font-family: 'Consolas', monospace; }
+        .token-box {
             background: #111;
-            padding: 2px 6px;
-            border-radius: 3px;
-            color: #ce9178;
-        }
-        .token {
-            background: #252526;
-            padding: 12px;
-            border-radius: 6px;
-            margin: 15px 0;
+            padding: 14px;
+            border-radius: 8px;
+            margin: 16px 0;
             word-break: break-all;
+            border: 1px solid #444;
         }
         .copy-btn {
             background: #667eea;
             color: white;
             border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
+            padding: 6px 14px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 13px;
             margin-left: 10px;
-            font-size: 12px;
+            transition: background 0.2s;
         }
         .copy-btn:hover { background: #556cd6; }
-        .curl {
-            background: #111;
-            padding: 12px;
-            border-radius: 6px;
+        .curl-example {
+            background: #0d0d0d;
+            padding: 14px;
+            border-radius: 8px;
             overflow-x: auto;
             font-size: 13px;
+            line-height: 1.5;
+            margin: 20px 0;
+            border: 1px solid #333;
         }
+        .nav-link { color: #667eea; text-decoration: none; }
+        .nav-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>🔧 Тестирование API эндпоинтов</h1>
 
-    <p>Пользователь: <strong>{{ user.username }}</strong> (ID: {{ user.id }})</p>
+    <p class="info">
+        👤 Пользователь: <strong style="color:#fff">{{ user.username }}</strong>
+        (ID: {{ user.id }})
+    </p>
 
     {% if token %}
-    <div class="token">
-        <strong>Ваш токен:</strong><br>
+    <div class="token-box">
+        <strong>🔑 Ваш токен:</strong><br>
         <code id="tokenValue">{{ token.key }}</code>
         <button class="copy-btn" onclick="copyToken()">📋 Копировать</button>
     </div>
     {% else %}
-    <p style="color: #f93e3e;">⚠️ У пользователя нет токена. Создайте через API или админку.</p>
+    <div class="token-box" style="border-color: #f93e3e; color: #f93e3e;">
+        ⚠️ У пользователя нет токена. Создайте его через Django Admin или API.
+    </div>
     {% endif %}
 
-    <h3 style="margin-top: 30px;">📦 Доступные эндпоинты:</h3>
+    <h3 style="color: #fff; margin-top: 30px;">📦 Доступные эндпоинты:</h3>
 
     <div class="endpoint">
         <span class="method get">GET</span>
-        <code>/api/categories/</code> — список категорий
+        <code>/api/categories/</code> <span style="color:#888">— список категорий</span>
     </div>
 
     <div class="endpoint">
         <span class="method get">GET</span>
-        <code>/api/products/</code> — список товаров
+        <code>/api/products/</code> <span style="color:#888">— список товаров</span>
     </div>
 
     <div class="endpoint">
         <span class="method post">POST</span>
-        <code>/api/cart/</code> — добавить товар в корзину
+        <code>/api/cart/</code> <span style="color:#888">— добавить товар в корзину</span>
     </div>
 
     <div class="endpoint">
         <span class="method get">GET</span>
-        <code>/api/orders/</code> — список заказов пользователя
+        <code>/api/orders/</code> <span style="color:#888">— список заказов пользователя</span>
     </div>
 
-    <h3 style="margin-top: 30px;">📋 Пример curl-запроса:</h3>
-    <div class="curl">
+    <h3 style="color: #fff; margin-top: 30px;">📋 Пример curl-запроса:</h3>
+    <div class="curl-example">
 curl -X GET http://127.0.0.1:8000/api/products/ \
-  -H "Authorization: Token <span id="curlToken">{{ token.key|default:'YOUR_TOKEN' }}</span>"
+  -H "Authorization: Token <span id="curlToken" style="color:#9cdcfe">{{ token.key|default:"YOUR_TOKEN_HERE" }}</span>"
     </div>
 
     <p style="margin-top: 30px;">
-        <a href="{% url 'auth:success' %}" style="color: #667eea;">← Назад к профилю</a>
+        {% url 'auth:success' as success_url %}
+        <a href="{{ success_url|default:'/auth/success/' }}" class="nav-link">← Назад к профилю</a>
     </p>
 </div>
 
+{# 🔹 ИСПРАВЛЕНИЕ: Оборачиваем JS в verbatim, чтобы Django не парсил {} #}
+{% verbatim %}
 <script>
 function copyToken() {
-    const token = document.getElementById('tokenValue').textContent;
+    const tokenEl = document.getElementById('tokenValue');
+    if (!tokenEl) return alert('Токен не найден на странице');
+
+    const token = tokenEl.textContent.trim();
+    if (!token || token === 'YOUR_TOKEN_HERE') {
+        return alert('Токен недоступен для копирования');
+    }
+
     navigator.clipboard.writeText(token).then(() => {
-        alert('Токен скопирован!');
+        const btn = document.querySelector('.copy-btn');
+        const originalText = btn.textContent;
+        btn.textContent = '✅ Скопировано!';
+        setTimeout(() => btn.textContent = originalText, 2000);
+    }).catch(() => {
+        alert('Не удалось скопировать. Разрешите доступ к буферу обмена.');
     });
 }
 </script>
+{% endverbatim %}
 </body>
 </html>
