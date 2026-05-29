@@ -1,79 +1,476 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Дипломный проект</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netology Diplom API</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #556cd6;
+            --secondary: #764ba2;
+            --bg-gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            --text: #1e293b;
+            --text-light: #64748b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-gradient);
+            color: white;
+            padding: 48px 20px 32px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.95;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-top: 16px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main content */
+        main {
+            max-width: 900px;
+            margin: -24px auto 40px;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Quick links grid */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .link-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--bg);
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .link-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .link-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .link-text {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .link-desc {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        /* API endpoints list */
+        .endpoint {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border);
+            font-size: 14px;
+        }
+
+        .endpoint:last-child { border-bottom: none; }
+
+        .method {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            margin-right: 12px;
+            min-width: 65px;
+            text-align: center;
+        }
+
+        .method.get { background: #dbeafe; color: #1d4ed8; }
+        .method.post { background: #dcfce7; color: #15803d; }
+        .method.put { background: #fef3c7; color: #b45309; }
+        .method.delete { background: #fee2e2; color: #b91c1c; }
+
+        .path {
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .path-desc {
+            color: var(--text-light);
+            margin-left: auto;
+            font-size: 13px;
+        }
+
+        /* Auth section */
+        .auth-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .auth-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .auth-btn.github {
+            background: #24292e;
+            color: white;
+        }
+        .auth-btn.github:hover { background: #1b1f23; }
+
+        .auth-btn.google {
+            background: #db4437;
+            color: white;
+        }
+        .auth-btn.google:hover { background: #c13524; }
+
+        .auth-btn.admin {
+            background: var(--primary);
+            color: white;
+        }
+        .auth-btn.admin:hover { background: var(--primary-dark); }
+
+        .auth-btn.outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+        .auth-btn.outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* User info */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-details strong {
+            display: block;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .user-details span {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 24px 20px 40px;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        footer a:hover { text-decoration: underline; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .logo { font-size: 24px; }
+            .endpoint { flex-wrap: wrap; gap: 8px; }
+            .path-desc { margin-left: 77px; }
+            .auth-buttons { flex-direction: column; }
+            .auth-btn { min-width: 100%; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Дипломный проект профессии </h1>
-    <h2>"Python-разработчик: расширенный курс"</h2>
-    <br>
-    <h3>Доступны следующие ссылки:</h3><br>
-    <ul>
-        <li>
-             <p><a href="admin">Админ-панель</a></p><br>
-        </li>
 
-        <li>
-             <p><a href="http://localhost:5555">Flower</a></p><br>
-        </li>
-        <li>
-             <p><a href="api/v1/partner/state">Управление состоянием партнера</a></p>
-        </li>
-        <li>
-             <p><a href="api/v1/partner/orders">Получение заказов поставщиками</a></p>
-        </li>
-        <li>
-             <p><a href="api/v1/user/register">Регистрация клиента</a></p>
-        </li>
-        <li>
-             <p><a href="api/v1/user/register/confirm">Подтверждение регистрации</a></p>
-        </li>
-        <li>
-            <p><a href="api/v1/user/details">Просмотр и редактирование данных</a></p>
-        </li>
-        <li>
-             <p><a href="api/v1/user/contact">Данные клиента</a></p>
-        </li>
-        <li>
-             <p><a href="api/v1/user/login">Логин клиента</a></p>
-        </li>
-        <li>
-             <p><a href="api/v1/password_reset">Сброс пароля</a></p>
-        </li>
-        <li>
-            <p><a href="api/v1/password_reset/confirm">Подтверждение сброса пароля</a></p>
-        </li>
-        <li>
-             <p><a href="api/v1/categories">Категории товаров</a></p>
-        </li>
-        <li>
-             <p><a href="api/v1/shops">Магазины</a></p>
-        </li>
-        <li>
-             <p><a href="api/v1/products">Товары</a></p>
-        </li>
-        <li>
-            <p><a href="api/v1/basket">Корзина покупок</a></p>
-        </li>
-        <li>
-             <p><a href="api/v1/order">Заказ</a></p>
-        </li>
-        <li>
-             <p><a href="api/v1/partner/update">Обновление базы данных партнера</a></p><br>
-        </li>
-        <li>
-             <p><a href="schema/swagger-ui">Swagger UI (интерактивная документация)</a></p>
-        </li>
-        <li>
-             <p><a href="schema/redoc">ReDoc (альтернативный интерфейс документации)</a></p>
-        </li>
-        <li>
-             <p><a href="schema">Схема OpenAPI в формате YAML</a></p>
-        </li>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <span class="logo-icon">🛒</span>
+            Netology Diplom API
+        </div>
+        <p class="subtitle">Сервис автоматизации закупок • Django REST Framework</p>
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            API работает
+        </div>
+    </header>
 
-    </ul>
+    <!-- Main Content -->
+    <main>
+
+        <!-- 🔐 Авторизация / Профиль -->
+        <div class="card">
+            <div class="card-title">👤 Аккаунт</div>
+
+            {% if user.is_authenticated %}
+                <div class="user-info">
+                    <div class="user-avatar">{{ user.username|first|upper }}</div>
+                    <div class="user-details">
+                        <strong>{{ user.username }}</strong>
+                        <span>{% if user.email %}{{ user.email }}{% else %}Нет email{% endif %}</span>
+                    </div>
+                </div>
+                <div class="auth-buttons">
+                    <a href="/admin/" class="auth-btn admin">⚙️ Админка</a>
+                    <a href="http://localhost:5555" class="auth-btn admin">⚙️ Flower</a>
+                    <a href="/auth/success/" class="auth-btn outline">📋 Профиль</a>
+                    <form action="{% url 'logout' %}" method="post" style="flex:1;min-width:140px;">
+                        {% csrf_token %}
+                        <button type="submit" class="auth-btn outline" style="width:100%;">🚪 Выйти</button>
+                    </form>
+                </div>
+            {% else %}
+                <p style="margin-bottom:16px;color:var(--text-light);font-size:14px;">
+                    Войдите для доступа к персональным данным и заказам:
+                </p>
+                <div class="auth-buttons">
+                    <a href="{% url 'social:begin' 'github' %}" class="auth-btn github">
+                        <span>🐙</span> GitHub
+                    </a>
+                    {% if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY %}
+                    <a href="{% url 'social:begin' 'google-oauth2' %}" class="auth-btn google">
+                        <span>🔷</span> Google
+                    </a>
+                    {% endif %}
+                    <a href="/admin/login/" class="auth-btn outline">
+                        <span>🔐</span> Пароль
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 📚 Документация API -->
+        <div class="card">
+            <div class="card-title">📚 Документация API</div>
+            <div class="links-grid">
+                <a href="schema/swagger-ui/" class="link-card">
+                    <span class="link-icon">📘</span>
+                    <div>
+                        <div class="link-text">Swagger / ReDoc</div>
+                        <div class="link-desc">Интерактивная документация</div>
+                    </div>
+                </a>
+                <a href="schema/redoc/" class="link-card">
+                    <span class="link-icon">📘</span>
+                    <div>
+                        <div class="link-text">Redoc / ReDoc</div>
+                        <div class="link-desc">Альтернативный интерфейс документации</div>
+                    </div>
+                </a>
+                <a href="/schema/" class="link-card">
+                    <span class="link-icon">📄</span>
+                    <div>
+                        <div class="link-text">OpenAPI Schema</div>
+                        <div class="link-desc">YAML спецификация</div>
+                    </div>
+                </a>
+<!--                <a href="/api/v1/auth/token/" class="link-card">-->
+<!--                    <span class="link-icon">🔑</span>-->
+<!--                    <div>-->
+<!--                        <div class="link-text">Получить токен</div>-->
+<!--                        <div class="link-desc">TokenAuth эндпоинт</div>-->
+<!--                    </div>-->
+<!--                </a>-->
+            </div>
+        </div>
+
+        <!-- 🗂️ Основные эндпоинты -->
+        <div class="card">
+            <div class="card-title">🗂️ Основные эндпоинты</div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/categories/</span>
+                <span class="path-desc">Список категорий</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/products/</span>
+                <span class="path-desc">Каталог товаров</span>
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/v1/cart/</span>
+                <span class="path-desc">Добавить в корзину</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/orders/</span>
+                <span class="path-desc">Мои заказы</span>
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/v1/orders/</span>
+                <span class="path-desc">Создать заказ</span>
+            </div>
+        </div>
+
+        <!-- 🧪 Тестирование -->
+        <div class="card">
+            <div class="card-title">🧪 Быстрое тестирование</div>
+            <p style="font-size:14px;color:var(--text-light);margin-bottom:16px;">
+                Скопируйте команду в терминал для проверки доступа:
+            </p>
+            <pre style="background:#1e1e1e;color:#d4d4d4;padding:14px;border-radius:8px;overflow-x:auto;font-size:13px;line-height:1.5;">
+<span style="color:#6a9955;"># Проверка списка товаров (без авторизации)</span>
+curl http://127.0.0.1:8000/api/v1/products/
+
+<span style="color:#6a9955;"># Запрос с токеном (замените YOUR_TOKEN)</span>
+curl -H "Authorization: Token YOUR_TOKEN" \
+     http://127.0.0.1:8000/api/v1/orders/
+            </pre>
+            <a href="/auth/test-api/" class="auth-btn outline" style="margin-top:12px;width:100%;justify-content:center;">
+                🔧 Открыть тестовую страницу
+            </a>
+        </div>
+
+        <!-- ℹ️ Информация -->
+        <div class="card">
+            <div class="card-title">ℹ️ О проекте</div>
+            <p style="font-size:14px;color:var(--text-light);line-height:1.7;">
+                <strong>Netology Diplom</strong> — дипломный проект курса «Python-разработчик».<br><br>
+                🛠️ <strong>Технологии:</strong> Django, DRF, PostgreSQL, Celery, Redis/Flower, Swagger, Throttling, Social-auth, Django-baton, Centry<br>
+                📦 <strong>Функции:</strong> каталог, корзина, заказы, авторизация<br>
+                🔐 <strong>Auth:</strong> Token + OAuth2 (GitHub, Google)
+            </p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>
+            🎓 Netology • Дипломный проект • 2026<br>
+            <a href="https://github.com/VladPrickly/Netology_python_final_diplom" target="_blank">
+                🐙 Исходный код на GitHub
+            </a>
+        </p>
+    </footer>
 
 </body>
 </html>
-

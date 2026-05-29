@@ -93,8 +93,6 @@ WSGI_APPLICATION = 'netology_pd_diplom.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-
-
     'default': {
         'ENGINE': os.getenv('DB_ENGINE'),
         'NAME': os.getenv('DB_NAME'),
@@ -143,7 +141,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.profile',
 ]  # Базовые права для профиля
 
-LOGIN_URL = '/admin'
+LOGIN_URL = '/admin/'
 LOGIN_REDIRECT_URL = '/'
 
 

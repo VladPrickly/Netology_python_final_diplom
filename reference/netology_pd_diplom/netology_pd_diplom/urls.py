@@ -37,13 +37,11 @@ urlpatterns = [
     path('schema/', SpectacularAPIView.as_view(), name='schema'),  # Схема OpenAPI в формате YAML
     path('social-oauth/', include('social_django.urls', namespace='social')),  # Авторизация через социальные сети
 
-    # Тестовые HTML-страницы для отладки
+    # Авторизация
     path('auth/login/', views.auth_login, name='login'),
     path('auth/success/', views.auth_success, name='success'),
     path('auth/error/', views.auth_error, name='error'),
     path('auth/test-api/', views.test_api, name='test_api'),
-
-    # Выход из системы
     path('auth/logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 
 ]

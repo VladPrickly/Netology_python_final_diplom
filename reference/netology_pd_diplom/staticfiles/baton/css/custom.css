@@ -1,0 +1,54 @@
+/* backend/static/baton/css/custom.css */
+
+/* Основные цвета */
+:root {
+    /* Primary color (кнопки, активные элементы) */
+    --bs-primary: #4f46e5;
+    --bs-primary-rgb: 79, 70, 229;
+
+    /* Sidebar */
+    --baton-sidebar-bg: #1e293b;
+    --baton-sidebar-color: #f1f5f9;
+    --baton-sidebar-hover-bg: #334155;
+
+    /* Header */
+    --baton-header-bg: #ffffff;
+    --baton-header-color: #1e293b;
+
+    /* Cards */
+    --baton-card-bg: #ffffff;
+    --baton-card-border: #e2e8f0;
+}
+
+/* Тёмная тема (переопределяется при выборе пользователем) */
+[data-bs-theme="dark"] {
+    --baton-sidebar-bg: #0f172a;
+    --baton-sidebar-color: #f8fafc;
+    --baton-sidebar-hover-bg: #1e293b;
+
+    --baton-card-bg: #1e293b;
+    --baton-card-border: #334155;
+}
+
+/* Кастомные стили для конкретных моделей */
+/* Например, подсветка статусов заказов */
+.field-status .readonly {
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-weight: 500;
+}
+
+.field-status .readonly:contains("new") {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.field-status .readonly:contains("confirmed") {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.field-status .readonly:contains("shipped") {
+    background: #dbeafe;
+    color: #1e40af;
+}
