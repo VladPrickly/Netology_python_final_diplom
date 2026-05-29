@@ -352,7 +352,7 @@
                     <a href="{% url 'social:begin' 'github' %}" class="auth-btn github">
                         <span>🐙</span> GitHub
                     </a>
-                    {% if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY %}
+                    {% if google_enabled %}
                     <a href="{% url 'social:begin' 'google-oauth2' %}" class="auth-btn google">
                         <span>🔷</span> Google
                     </a>
@@ -404,9 +404,45 @@
             <div class="card-title">🗂️ Основные эндпоинты</div>
 
             <div class="endpoint">
+                <span class="method get">POST</span>
+                <span class="path">/api/v1/user/register/</span>
+                <span class="path-desc">Регистрация клиента</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">POST</span>
+                <span class="path">/api/v1/user/register/confirm/</span>
+                <span class="path-desc">Подтверждение регистрации</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">POST</span>
+                <span class="path">/api/v1/user/details/</span>
+                <span class="path-desc">Просмотр и редактирование данных</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">POST</span>
+                <span class="path">/api/v1/user/contact/</span>
+                <span class="path-desc">Данные клиента</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">POST</span>
+                <span class="path">/api/v1/user/password_reset/</span>
+                <span class="path-desc">Сброс пароля</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">POST</span>
+                <span class="path">/api/v1/user/password_reset/confirm/</span>
+                <span class="path-desc">Подтверждение сброса пароля</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/shops/</span>
+                <span class="path-desc">Магазины</span>
+            </div>
+            <div class="endpoint">
                 <span class="method get">GET</span>
                 <span class="path">/api/v1/categories/</span>
-                <span class="path-desc">Список категорий</span>
+                <span class="path-desc">Категории товаров</span>
             </div>
             <div class="endpoint">
                 <span class="method get">GET</span>
@@ -420,14 +456,35 @@
             </div>
             <div class="endpoint">
                 <span class="method get">GET</span>
+                <span class="path">/api/v1/basket/</span>
+                <span class="path-desc">Корзина покупок</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
                 <span class="path">/api/v1/orders/</span>
-                <span class="path-desc">Мои заказы</span>
+                <span class="path-desc">Заказы</span>
             </div>
             <div class="endpoint">
                 <span class="method post">POST</span>
                 <span class="path">/api/v1/orders/</span>
                 <span class="path-desc">Создать заказ</span>
             </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/v1/partner/update/</span>
+                <span class="path-desc">Обновление базы данных партнера</span>
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/v1/partner/state/</span>
+                <span class="path-desc">Управление состоянием партнера</span>
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/v1/partner/orders/</span>
+                <span class="path-desc">Получение заказов поставщиками</span>
+            </div>
+        </div>
         </div>
 
         <!-- 🧪 Тестирование -->

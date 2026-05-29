@@ -738,10 +738,17 @@ class OrderView(APIView):
 
 
 
+# def index(request):
+#     return render(request, 'backend/index.html')
+
 def index(request):
-    return render(request, 'backend/index.html')
-
-
+    """Стартовая страница проекта"""
+    return render(request, 'backend/index.html', {
+        'debug': settings.DEBUG,
+        # Передаём флаги доступности провайдеров
+        'google_oauth_enabled': bool(settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY),
+        'github_oauth_enabled': bool(settings.SOCIAL_AUTH_GITHUB_KEY),
+    })
 
 # social-auth functions
 
