@@ -27,13 +27,19 @@ from backend import views
 
 urlpatterns = [
     path('', views.index, name='home'),
-    path('admin/', admin.site.urls, name='admin'),
-    path('baton/', include('baton.urls'), name='baton'),
+    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls, name='admin'),
+    # path('baton/', include('baton.urls'), name='baton'),
+    path('baton/', include('baton.urls')),
     path('api/v1/', include('backend.urls', namespace='backend')),
     path('__debug__/', include("debug_toolbar.urls")),
+
+    # Документация
     path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'), # Swagger UI (интерактивная документация)
     path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'), # ReDoc (альтернативный интерфейс документации)
     path('schema/', SpectacularAPIView.as_view(), name='schema'),  # Схема OpenAPI в формате YAML
+
+    # Social auth
     path('social-oauth/', include('social_django.urls', namespace='social')),  # Авторизация через социальные сети
 
     # Авторизация

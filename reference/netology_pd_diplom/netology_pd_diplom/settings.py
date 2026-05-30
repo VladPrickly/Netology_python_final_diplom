@@ -141,13 +141,15 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.profile',
 ]  # Базовые права для профиля
 
-LOGIN_URL = '/admin/'
+LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
+# LOGOUT_REDIRECT_URL = '/auth/login/'
 
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/auth/success/'      # После успешного входа
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/auth/error/'           # При ошибке
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/auth/success/?new=1'
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'email']
 
 # Pipeline для кастомизации процесса аутентификации
 SOCIAL_AUTH_PIPELINE = (

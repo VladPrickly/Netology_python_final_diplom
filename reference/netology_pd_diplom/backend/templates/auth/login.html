@@ -188,7 +188,8 @@
         <div class="standard-auth">
             <p>
                 Стандартный вход через
-                <a href="/admin/login/">Django Admin</a>
+<!--                <a href="/admin/login/">Django Admin</a>-->
+                <a href="/admin/">Django Admin</a>
             </p>
             <p style="margin-top: 12px; font-size: 13px; color: #888;">
                 🔗 API документация: <strong><a href="/schema/swagger-ui/" style="color: var(--primary);">Swagger</a></strong>
@@ -199,7 +200,8 @@
             <p>🔧 Тестовая страница для отладки OAuth</p>
             <p style="margin-top: 6px;">
                 <!-- Исправлено: безопасная проверка URL -->
-                {% url 'auth:test_api' as test_api_url %}
+<!--                {% url 'auth:test_api' as test_api_url %}-->
+                {% url 'test_api' as test_api_url %}
                 {% if test_api_url %}
                 <a href="{{ test_api_url }}">→ Протестировать API с токеном</a>
                 {% else %}
@@ -207,7 +209,8 @@
                 {% endif %}
             </p>
             <p style="margin-top: 4px; font-size: 11px; color: #bbb;">
-                Провайдеры: GitHub{% if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY %}, Google{% endif %}
+<!--                Провайдеры: GitHub{% if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY %}, Google{% endif %}-->
+                Провайдеры: GitHub, Google
             </p>
         </div>
     </div>
