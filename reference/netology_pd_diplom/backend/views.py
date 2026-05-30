@@ -11,6 +11,7 @@ from django.http import JsonResponse, HttpResponse
 from requests import get
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from ujson import loads as load_json
@@ -28,6 +29,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
 import logging
+
+
+class SentryDebugView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        raise RuntimeError('Sentry debug endpoint triggered')
 
 
 
