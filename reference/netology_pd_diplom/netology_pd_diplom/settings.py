@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django_rest_passwordreset',
     'django_celery_results',
     'debug_toolbar',
+    'imagekit',
     'backend',
     'drf_spectacular',
     'social_django',
@@ -115,7 +116,6 @@ DATABASES = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    # 'django.contrib.auth.backends.ModelBackend',
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
@@ -152,19 +152,19 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.profile',
 ]  # Базовые права для профиля
 
-LOGIN_URL = '/auth/login/'
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/'
-# LOGOUT_REDIRECT_URL = '/auth/login/'
+LOGOUT_REDIRECT_URL = '/'
 
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/auth/success/'      # После успешного входа
-SOCIAL_AUTH_LOGIN_ERROR_URL = '/auth/error/'           # При ошибке
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'success'      # После успешного входа
+SOCIAL_AUTH_LOGIN_ERROR_URL = 'error'           # При ошибке
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/auth/success/?new=1'
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'email']
 
 # Pipeline для кастомизации процесса аутентификации
 SOCIAL_AUTH_PIPELINE = (
-    # Стандартные шаги social-auth
+    # Стандартные шаги social-authINTERNAL_IPS
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.auth_allowed',
@@ -193,7 +193,7 @@ SOCIAL_AUTH_ASSOCIATE_BY_EMAIL = True
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru-Ru'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Europe/Moscow'
 
@@ -211,6 +211,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+IMAGE_UPLOAD_MAX_SIZE = int(os.getenv('IMAGE_UPLOAD_MAX_SIZE', 5 * 1024 * 1024))
+IMAGE_UPLOAD_ALLOWED_FORMATS = tuple(
+    item.strip().upper()
+    for item in os.getenv('IMAGE_UPLOAD_ALLOWED_FORMATS', 'JPEG,JPG,PNG,WEBP').split(',')
+    if item.strip()
+)
+
 
 if DEBUG:
     from django.conf.urls.static import static

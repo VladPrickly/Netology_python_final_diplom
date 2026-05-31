@@ -58,6 +58,8 @@ coverage.xml
 
 
 */migrations/*
+!backend/migrations/
+!backend/migrations/*.py
 .log
 db.sqlite3
 

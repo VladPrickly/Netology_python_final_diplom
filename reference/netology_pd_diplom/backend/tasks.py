@@ -1,12 +1,11 @@
 import logging
-import yaml
-import requests
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from celery import shared_task
-from django.db import transaction
 from django.http import JsonResponse
 
+from backend.image_specs import AVATAR_THUMBNAIL_SPECS, PRODUCT_THUMBNAIL_SPECS
+from backend.media import generate_thumbnails
 from .models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter, User
 
 logger = logging.getLogger(__name__)
@@ -73,3 +72,27 @@ def do_import(shop_id: int, user_id: int, url: str, data):
 
     logger.info(f"Импорт завершён: магазин {shop.name}, товаров: {len(data.get('goods', []))}")
     return JsonResponse({'Status': 'success'})
+
+
+@shared_task(bind=True, max_retries=3, default_retry_delay=30)
+def generate_avatar_thumbnails(self, user_id: int):
+    try:
+        user = User.objects.get(id=user_id)
+        if user.avatar:
+            generate_thumbnails(user.avatar, AVATAR_THUMBNAIL_SPECS)
+        logger.info('Avatar thumbnails generated for user %s', user_id)
+    except Exception as exc:
+        logger.exception('Avatar thumbnail generation failed for user %s', user_id)
+        raise self.retry(exc=exc)
+
+
+@shared_task(bind=True, max_retries=3, default_retry_delay=30)
+def generate_product_thumbnails(self, product_info_id: int):
+    try:
+        product_info = ProductInfo.objects.get(id=product_info_id)
+        if product_info.image:
+            generate_thumbnails(product_info.image, PRODUCT_THUMBNAIL_SPECS)
+        logger.info('Product thumbnails generated for product info %s', product_info_id)
+    except Exception as exc:
+        logger.exception('Product thumbnail generation failed for product info %s', product_info_id)
+        raise self.retry(exc=exc)

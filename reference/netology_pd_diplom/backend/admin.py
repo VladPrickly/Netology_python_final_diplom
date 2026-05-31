@@ -2,12 +2,12 @@
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-# from baton.autodiscover import autodiscover
+from baton.autodiscover import autodiscover
 from backend.models import User, Shop, Category, Product, ProductInfo, Parameter, ProductParameter, Order, OrderItem, \
     Contact, ConfirmEmailToken
 
 # Инициализация Baton
-# autodiscover()
+autodiscover()
 
 
 @admin.register(User)
@@ -17,13 +17,13 @@ class CustomUserAdmin(UserAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'password', 'type')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'company', 'position')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'company', 'position', 'avatar')}),
         ('Permissions', {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
-    list_display = ('email', 'first_name', 'last_name', 'company', 'type', 'is_staff')
+    list_display = ('email', 'first_name', 'last_name', 'company', 'type', 'avatar', 'is_staff')
     list_editable = ('first_name', 'last_name', 'company')
     list_per_page = 20
 
@@ -61,7 +61,7 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(ProductInfo)
 class ProductInfoAdmin(admin.ModelAdmin):
     """ Информационный список о продуктах """
-    list_display = ('product', 'model', 'external_id', 'shop', 'quantity', 'price', 'price_rrc')
+    list_display = ('product', 'model', 'external_id', 'shop', 'quantity', 'price', 'price_rrc', 'image')
     list_filter = ('shop', 'quantity', 'price')
     ordering = ['product']
     search_fields = ['product', 'model']
