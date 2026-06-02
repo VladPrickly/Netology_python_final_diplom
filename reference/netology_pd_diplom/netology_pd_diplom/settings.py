@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'django_rest_passwordreset',
     'django_celery_results',
     'debug_toolbar',
+    'cachalot',
     'imagekit',
     'backend',
     'drf_spectacular',
@@ -78,6 +79,7 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
     # 'baton.autodiscover.AutodiscoverMixin',
+    'cachalot.middleware.CachalotMiddleware',
 ]
 
 ROOT_URLCONF = 'netology_pd_diplom.urls'
@@ -164,8 +166,8 @@ SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/auth/success/?new=1'
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'email']
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
-# URL для успешного входа (на случай, если нужно переопределить)
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+# # URL для успешного входа (на случай, если нужно переопределить)
+# SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 
 # Pipeline для кастомизации процесса аутентификации
 SOCIAL_AUTH_PIPELINE = (
@@ -278,16 +280,40 @@ REST_FRAMEWORK = {
     }
 }
 
-# CACHE для троттлинга
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# # CACHE для троттлинга
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+#         'LOCATION': 'throttling',
+#     }
+# }
+
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'throttling',
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "db": "1",
+        }
     }
 }
 
+# Конфигурация Cachalot
+CACHALOT_ENABLED = True
+CACHALOT_TIMEOUT = 3600  # 1 час
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CACHALOT_ONLY_CACHABLE_TABLES = frozenset((
+    'backend_category',      # Категории
+    'backend_shop',          # Магазины (Поставщики)
+    'backend_product',       # Каталог товаров
+    'backend_parameter',     # Характеристики товаров
+    'backend_productparameter' # Связь товаров и характеристик (M2M)
+))
+
 
 
 # Конфигурация Celery
@@ -304,6 +330,7 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_MONITORING = True
 FLOWER_PORT = 5555
 FLOWER_BASIC_AUTH = os.getenv('FLOWER_BASIC_AUTH', '')
+
 
 # Конфигурация DRF SPECTACULAR
 SPECTACULAR_SETTINGS = {
@@ -421,6 +448,23 @@ BATON = {
 }
 
 
+# Конфигурация Django Debug Toolbar
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.history.HistoryPanel',
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.alerts.AlertsPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+    'debug_toolbar.panels.profiling.ProfilingPanel',
+    'cachalot.panels.CachalotPanel',
+]
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -428,5 +472,6 @@ LOGGING = {
     'loggers': {
         'social': {'handlers': ['console'], 'level': 'DEBUG', 'propagate': True},
         'django': {'handlers': ['console'], 'level': 'INFO'},
-    },
+        'cachalot': {'handlers': ['console'], 'level': 'DEBUG'}
+        },
 }

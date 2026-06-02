@@ -35,7 +35,9 @@ services:
     build: .
     container_name: app
     command: |
-      sh -c "python manage.py migrate && \
+      sh -c "python manage.py collectstatic --noinput && \
+             python manage.py makemigrations backend && \
+             python manage.py migrate && \
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
@@ -48,6 +50,7 @@ services:
       - DB_PORT=5432
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       - CELERY_BROKER_URL=redis://redis:6379/0
+      - CACHE_URL=redis://redis:6379/1
     depends_on:
       db:
         condition: service_healthy
