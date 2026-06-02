@@ -227,7 +227,11 @@
             background: green;
             color: white;
         }
-        .auth-btn.google:hover { background: #c13524; }
+        .auth-btn.google:hover {
+            background: #c13524;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+        }
 
         .auth-btn.admin {
             background: var(--primary);
@@ -241,8 +245,11 @@
             color: white;
         }
         .auth-btn.outline:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+            background: #c53030;
+            border-color: #dc2626;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
         }
 
         /* User info */
