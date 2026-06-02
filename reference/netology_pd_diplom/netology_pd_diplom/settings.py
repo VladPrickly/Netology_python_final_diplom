@@ -1,3 +1,4 @@
+# netology_pd_diplom/settings.py
 """
 Django settings for netology_pd_diplom project.
 
@@ -161,6 +162,10 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'success'      # После успешного 
 SOCIAL_AUTH_LOGIN_ERROR_URL = 'error'           # При ошибке
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/auth/success/?new=1'
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'email']
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+
+# URL для успешного входа (на случай, если нужно переопределить)
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 
 # Pipeline для кастомизации процесса аутентификации
 SOCIAL_AUTH_PIPELINE = (
@@ -212,6 +217,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+
+if DEBUG:
+    from django.conf.urls.static import static
+
+
 IMAGE_UPLOAD_MAX_SIZE = int(os.getenv('IMAGE_UPLOAD_MAX_SIZE', 5 * 1024 * 1024))
 IMAGE_UPLOAD_ALLOWED_FORMATS = tuple(
     item.strip().upper()
@@ -220,11 +230,8 @@ IMAGE_UPLOAD_ALLOWED_FORMATS = tuple(
 )
 
 
-if DEBUG:
-    from django.conf.urls.static import static
-
-
 AUTH_USER_MODEL = 'backend.User'
+SITE_ID = 1
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_USE_TLS = True
@@ -378,11 +385,17 @@ BATON = {
         {'type': 'model', 'app': 'backend', 'name': 'order', 'label': 'Заказы', 'icon': 'shopping_cart'},
         {'type': 'model', 'app': 'backend', 'name': 'shop', 'label': 'Магазины', 'icon': 'store'},
 
+        # Разделитель
+        {'type': 'divider'},
+
         # Внешняя ссылка
         {'type': 'free', 'label': 'Документация API (Swagger)', 'url': '/schema/swagger-ui/', 'icon': 'description',
          'new_browser_tab': True},
         {'type': 'free', 'label': 'Альтернативный интерфейс документации (ReDoc)', 'url': '/schema/redoc/', 'icon': 'description',
          'new_browser_tab': True},
+        {'type': 'free', 'label': 'Инструмент для мониторинга и управления кластерами Celery (Flower)', 'url': 'http://localhost:5555/', 'icon': 'description',
+         'new_browser_tab': True},
+
 
         # Разделитель
         {'type': 'divider'},

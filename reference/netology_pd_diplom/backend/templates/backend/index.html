@@ -1,3 +1,4 @@
+<!--backend/templates/backend/index.html-->
 {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
@@ -223,7 +224,7 @@
         .auth-btn.github:hover { background: #1b1f23; }
 
         .auth-btn.google {
-            background: #db4437;
+            background: green;
             color: white;
         }
         .auth-btn.google:hover { background: #c13524; }
@@ -235,9 +236,9 @@
         .auth-btn.admin:hover { background: var(--primary-dark); }
 
         .auth-btn.outline {
-            background: transparent;
+            background: blue;
             border: 2px solid var(--border);
-            color: var(--text);
+            color: white;
         }
         .auth-btn.outline:hover {
             border-color: var(--primary);
@@ -349,16 +350,20 @@
                     Войдите для доступа к персональным данным и заказам:
                 </p>
                 <div class="auth-buttons">
-                    <a href="{% url 'social:begin' 'github' %}" class="auth-btn github">
-                        <span>🐙</span> GitHub
+<!--                    <a href="{% url 'social:begin' 'github' %}" class="auth-btn github">-->
+<!--                        <span>🐙</span> GitHub-->
+<!--                    </a>-->
+                    <a href="/auth/login/" class="auth-btn google">
+                        <span>🔐</span> Авторизация через социальные сети <br>(GitHub, Google)
                     </a>
-                    {% if google_enabled %}
-                    <a href="{% url 'social:begin' 'google-oauth2' %}" class="auth-btn google">
-                        <span>🔷</span> Google
-                    </a>
-                    {% endif %}
+
+<!--                    {% if google_enabled %}-->
+<!--                    <a href="{% url 'social:begin' 'google-oauth2' %}" class="auth-btn google">-->
+<!--                        <span>🔷</span> Google-->
+<!--                    </a>-->
+<!--                    {% endif %}-->
                     <a href="/admin/login/" class="auth-btn outline">
-                        <span>🔐</span> Пароль
+                        <span>🔐</span> Админ-панель
                     </a>
                 </div>
             {% endif %}
@@ -511,7 +516,7 @@ curl -H "Authorization: Token YOUR_TOKEN" \
             <div class="card-title">ℹ️ О проекте</div>
             <p style="font-size:14px;color:var(--text-light);line-height:1.7;">
                 <strong>Netology Diplom</strong> — дипломный проект курса «Python-разработчик».<br><br>
-                🛠️ <strong>Технологии:</strong> Django, DRF, PostgreSQL, Celery, Redis/Flower, Swagger, Throttling, Social-auth, Django-baton, Centry<br>
+                🛠️ <strong>Технологии:</strong> Django, DRF, PostgreSQL, Redis, Celery/Flower, Swagger, Throttling, Social-auth, Django-baton, Sentry, Cachalot<br>
                 📦 <strong>Функции:</strong> каталог, корзина, заказы, авторизация<br>
                 🔐 <strong>Auth:</strong> Token + OAuth2 (GitHub, Google)
             </p>

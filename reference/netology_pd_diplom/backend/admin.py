@@ -81,11 +81,18 @@ class ParameterAdmin(admin.ModelAdmin):
 @admin.register(ProductParameter)
 class ProductParameterAdmin(admin.ModelAdmin):
     """ Список параметров """
-    list_display = ('product_info__product', 'parameter', 'value')
+    # list_display = ('product_info__product', 'parameter', 'value')
+    list_display = ('get_product', 'parameter', 'value')
+
     list_filter = ('parameter', 'value')
     search_fields = ['product_info__product', 'parameter', 'value']
     ordering = ['product_info__product']
     list_per_page = 20
+
+    def get_product(self, obj):
+        return obj.product_info.product
+
+    get_product.short_description = 'Product'
 
 
 @admin.register(Order)
