@@ -13,3 +13,5 @@ class CachalotTest(TestCase):
         # Второй запрос — из кэша
         with self.assertNumQueries(0):
             list(Category.objects.all())
+
+

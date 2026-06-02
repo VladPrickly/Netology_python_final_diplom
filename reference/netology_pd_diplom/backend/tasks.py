@@ -8,8 +8,6 @@ from backend.image_specs import AVATAR_THUMBNAIL_SPECS, PRODUCT_THUMBNAIL_SPECS
 from backend.media import generate_thumbnails
 from .models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter, User
 
-from cachalot.api import invalidate
-
 logger = logging.getLogger(__name__)
 
 
@@ -72,8 +70,6 @@ def do_import(shop_id: int, user_id: int, url: str, data):
                                             parameter_id=parameter_object.id,
                                             value=value)
 
-    # Product.objects.bulk_create(products_to_create, batch_size=1000)
-    # invalidate('shop_product')
     logger.info(f"Импорт завершён: магазин {shop.name}, товаров: {len(data.get('goods', []))}")
     return JsonResponse({'Status': 'success'})
 

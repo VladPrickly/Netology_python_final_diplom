@@ -79,7 +79,7 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
     # 'baton.autodiscover.AutodiscoverMixin',
-    'cachalot.middleware.CachalotMiddleware',
+    # 'cachalot.middleware.CachalotMiddleware',
 ]
 
 ROOT_URLCONF = 'netology_pd_diplom.urls'
@@ -157,7 +157,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
 
 LOGIN_URL = 'admin/'
 LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'home'
 
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'success'      # После успешного входа
@@ -427,7 +427,7 @@ BATON = {
         {'type': 'divider'},
 
         # Ссылка на настройки
-        {'type': 'free', 'label': 'Настройки', 'url': '/admin/baton/batonsettings/', 'icon': 'settings'},
+        # {'type': 'free', 'label': 'Настройки', 'url': '/admin/baton/batonsettings/', 'icon': 'settings'},
     ),
 
     # Отображение меню
