@@ -109,3 +109,4 @@ venv.bak/
 
 
 celery.log
+reference/netology_pd_diplom/celery.log
