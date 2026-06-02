@@ -311,9 +311,8 @@ CACHALOT_ONLY_CACHABLE_TABLES = frozenset((
     'backend_shop',          # Магазины (Поставщики)
     'backend_product',       # Каталог товаров
     'backend_parameter',     # Характеристики товаров
-    'backend_productparameter' # Связь товаров и характеристик (M2M)
+    'django_content_type',   # Требуется для работы cachalot
 ))
-
 
 
 # Конфигурация Celery
