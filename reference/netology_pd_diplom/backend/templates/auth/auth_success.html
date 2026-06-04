@@ -251,14 +251,15 @@
         {% endif %}
 
         <div class="actions">
-            <a href="/api/" class="btn btn-primary">
-                📦 Перейти к API
+            <a href="/schema/swagger-ui/" class="btn btn-primary">
+                🔧 Перейти к API
             </a>
             <a href="/admin/" class="btn btn-secondary">
                 ⚙️ Django Admin
             </a>
-            <a href="{% url 'auth:test_api' as api_url %}{{ api_url }}" class="btn btn-secondary">
-                🔧 Тестировать API с токеном
+            <a href="/" class="btn btn-secondary">
+<!--            <a href="{% url 'auth:test_api' as api_url %}{{ api_url }}" class="btn btn-secondary">-->
+                📦 Перейти на домашнюю страницу
             </a>
             <form action="{% url 'logout' as logout_url %}{{ logout_url }}" method="post" style="display:inline;">
                 {% csrf_token %}

@@ -7,8 +7,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'netology_pd_diplom.settings')
 
 app = Celery(
     'netology_pd_diplom',
-    broker='redis://localhost:6379/0',
-    backend='redis://localhost:6379/0',
+    broker='redis://redis:6379/0',
+    backend='redis://redis:6379/0',
 )
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
@@ -20,3 +20,6 @@ app.conf.update(
     worker_send_task_events=True,  # Отправлять события задач
     task_send_sent_event=True,     # Отправлять событие отправки
 )
+
+# Устраняем CPendingDeprecationWarning
+app.conf.broker_connection_retry_on_startup = True

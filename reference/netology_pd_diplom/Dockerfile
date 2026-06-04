@@ -9,6 +9,8 @@ EXPOSE 8000
 
 COPY requirements.txt .
 
+# COPY entrypoint.sh /app/entrypoint.sh
+
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 

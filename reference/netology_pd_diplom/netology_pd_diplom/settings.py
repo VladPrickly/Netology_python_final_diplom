@@ -155,13 +155,13 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.profile',
 ]  # Базовые права для профиля
 
-LOGIN_URL = 'admin/'
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'success'      # После успешного входа
-SOCIAL_AUTH_LOGIN_ERROR_URL = 'error'           # При ошибке
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'success'
+SOCIAL_AUTH_LOGIN_ERROR_URL = 'error'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/auth/success/?new=1'
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'email']
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
@@ -218,6 +218,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
 
 
 if DEBUG:
@@ -316,8 +321,9 @@ CACHALOT_ONLY_CACHABLE_TABLES = frozenset((
 
 
 # Конфигурация Celery
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/1')
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://redis:6379/1')
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
